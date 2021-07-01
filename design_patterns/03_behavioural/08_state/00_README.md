@@ -12,7 +12,7 @@ its state in relation to you the human player
 
 ## Dissection
 
-**State** - interface defining what concrete states operations should be
-**Concrete state** - implements the state functionality
-**Context** - holds the current state and delegates function calls to the state
+- **State** - interface defining what concrete states operations should be
+- **Concrete state** - implements the state functionality
+- **Context** - holds the current state and delegates function calls to the state
 instance
