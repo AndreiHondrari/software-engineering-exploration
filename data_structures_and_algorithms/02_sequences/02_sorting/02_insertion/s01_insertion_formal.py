@@ -29,11 +29,14 @@ if __name__ == '__main__':
             # always override the value to the right of j, or otherwise said
             # always override a value with the one to its left
             array[i + 1] = array[i]
+            print(f"val-swap: {array} K={key} j={j} i={i}")
+
             i = i - 1  # keep going left
 
         # finally override either the first value of the array or
         # the value immediately to the right of the key's position
         # with the value of the key
         array[i + 1] = key
+        print(f"key-swap: {array} K={key} j={j} i={i}")
 
     print(f"Sorted array: {array}")

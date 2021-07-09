@@ -31,6 +31,7 @@ if __name__ == '__main__':
             temp_value = array[i + 1]
             array[i + 1] = array[i]
             array[i] = temp_value
+            print(f"swap: {array} K={key} j={j} i={i}")
             i = i - 1  # keep going left
 
     print(f"Sorted array: {array}")
