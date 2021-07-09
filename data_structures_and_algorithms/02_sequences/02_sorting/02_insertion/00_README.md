@@ -26,3 +26,8 @@ values in order from the start to the key's position.
 
 This process continues until the last element of the array is reached, and
 respectively the whole array is sorted.
+
+An alternative to this would be to just swap values from the key position
+until either the start of the array is reached or a lower value than the key.
+This alternative eliminates the step that does the override with the key
+after each swap sweep.
