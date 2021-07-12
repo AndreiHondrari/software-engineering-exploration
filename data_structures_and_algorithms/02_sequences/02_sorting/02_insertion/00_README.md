@@ -1,6 +1,5 @@
 # Insertion sort
 
-
 ## Algorithm description
 
 The algorithm works by taking a value (key) and comparing it to all the values
