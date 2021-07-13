@@ -16,16 +16,16 @@ if __name__ == '__main__':
     while True:
         swapped = False  # reset the swap flag
 
-        # goes over the entire array from second to pre-last
+        # goes over the entire array from first to pre-last
         # this for is done again and again until there is no swap
-        for i in range(1, len(array)):
+        for i in range(0, len(array) - 1):
 
             # swaps every pair from left to right if
             # the left value is greater than the right value
-            if array[i - 1] > array[i]:
-                temporary_value = array[i - 1]
-                array[i - 1] = array[i]
-                array[i] = temporary_value
+            if array[i] > array[i + 1]:
+                temporary_value = array[i]
+                array[i] = array[i + 1]
+                array[i + 1] = temporary_value
                 print(f"swap: {array} i={i}")
                 swapped = True  # remember that there was a swap
 
