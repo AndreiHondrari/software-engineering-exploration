@@ -15,8 +15,8 @@ class Item(Generic[T]):
         return self._under_item
 
     @under_item.setter
-    def under_item(self, new_item: Optional['Item[T]']) -> None:
-        self._under_item = new_item
+    def under_item(self, item: Optional['Item[T]']) -> None:
+        self._under_item = item
 
     def __init__(
         self,
@@ -45,8 +45,11 @@ class Stack(Generic[T]):
         return self._current_size
 
     @property
-    def top(self) -> bool:
-        pass
+    def top(self) -> Optional[T]:
+        if self._top is None:
+            return None
+
+        return self._top.value
 
     def __init__(self, max_size: int):
         self._max_items = max_size
