@@ -12,7 +12,7 @@ class Node(Generic[T]):
         next: Optional['Node[T]'] = None
     ) -> None:
         self._value: T = value
-        self._next_node = next
+        self._next_node: Optional['Node[T]'] = next
 
     @property
     def value(self) -> T:
@@ -56,16 +56,20 @@ class LinkedList(Generic[T]):
     def insert(self, value: T, index: Optional[int] = None) -> None:
         new_node = Node(value)
 
-        # insertion in a specific index
         # insertion at the end
         if index is None or index is not None and index >= self._size:
+
+            # just make it the head and tail if the list is empty
             if self._tail is None:
                 self._head = new_node
                 self._tail = self._head
+
+            # or just put it after the tail and make the new node the tail
             else:
                 self._tail.next_node = new_node
                 self._tail = new_node
 
+        # insertion in a specific index
         else:
             previous: Optional[Node[T]] = None
             current: Node[T] = cast(Node[T], self._head)
@@ -81,6 +85,7 @@ class LinkedList(Generic[T]):
         self._size += 1
 
     def get(self, index: int) -> Optional[T]:
+        # can return only existing nodes
         if index >= self._size:
             return None
 
