@@ -91,9 +91,12 @@ class Queue(Generic[T]):
         if self.is_full:
             return False
 
+        # make the new item as back and front
         if self.is_empty:
             self._back = Item[T](value)
             self._front = self._back
+
+        # or make the new item as the new back
         else:
             new_item = Item[T](value, next_item=self._back)
             cast(Item[T], self._back).previous_item = new_item
@@ -106,13 +109,15 @@ class Queue(Generic[T]):
         if self.is_empty:
             return None
 
-        item = self._front
+        item: Item[T] = cast(Item[T], self._front)
+
+        # make the next in line (previous item) as the new front
         self._front = cast(Item[T], self._front).previous_item
         if self._front is not None:
             self._front.next_item = None
 
         self._current_size -= 1
-        return cast(Item[T], item).value
+        return item.value
 
 
 def printout(queue: Queue[T], name: str) -> None:
