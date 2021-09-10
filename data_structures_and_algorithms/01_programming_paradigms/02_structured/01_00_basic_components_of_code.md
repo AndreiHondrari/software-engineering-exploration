@@ -287,7 +287,7 @@ if (expression_1) {
   }
 }
 
-else {  // equivalent to if (!expresion_1)
+else {  // equivalent to if (!expression_1)
   if (expression_2) {
     instruction_1;
     instruction_2;
@@ -305,3 +305,8 @@ if (expression_1 ^ expression_2) {
 }
 
 ```
+
+## Parametrisation of the control of the flow
+
+Having the ability to base the flow of our execution on given variable inputs,
+we can
