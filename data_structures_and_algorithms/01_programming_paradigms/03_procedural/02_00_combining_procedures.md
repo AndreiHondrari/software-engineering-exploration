@@ -49,6 +49,9 @@ void do_that() {
   instruction_x;
   instruction_y;
 }
+
+do_something(&do_this);
+do_something(&do_that);
 ```
 
 Example in Python:
@@ -64,6 +67,9 @@ def do_this():
 def do_that():
   instruction_x
   instruction_y
+
+do_something(do_this)
+do_something(do_that)
 ```
 
 At this point you will notice that this introduces variability in functionality, which we can further use to organise our functionalities in some interesting ways.
