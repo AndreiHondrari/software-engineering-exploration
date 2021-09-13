@@ -279,7 +279,7 @@ def do_something(x):
   do_something(x + 1)
 ```
 
-Notice in the previous example how the return instruction occurs prior to calling recursively `do_something` one more time.
+Notice in the previous example how the return instruction occurs prior to calling recursively `do_something` one more time. Breaking after the recursive call would be pointless as to why it would end up into an infinite recursive call stack.
 
 #### Recursive function as a loop
 
@@ -350,6 +350,8 @@ The order of the callback can be reverse as well by reversing these two lines:
 loop_callee(limit, callback, i=i+1)
 callback()  # now in reverse
 ```
+
+Infinite looping is not possible with such a construct because the call stack would fill up very fast.
 
 #### Palindrome recursive call
 
