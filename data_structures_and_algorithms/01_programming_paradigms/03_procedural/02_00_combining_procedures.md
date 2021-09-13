@@ -141,6 +141,20 @@ void (*
 };
 ```
 
+Or by using a fancy pointer like in C++:
+```C++
+#import <functional>
+
+void do_something() {};
+
+std::function<void()> give_function() {
+  return do_something;
+}
+
+std::function<void()> some_function = give_function();
+some_function();
+```
+
 
 Example in Python:
 ```Python
@@ -154,7 +168,11 @@ some_function = give_function()
 some_function()
 ```
 
-### Generating a function with a function
+### Closures: Generating a function with a function
+
+Closures are functions created on the fly that capture some of the
+enclosing scope and lives onward, even if the scope that created
+the closure has ended.
 
 Example in Python
 ```Python
@@ -169,18 +187,6 @@ my_function()
 
 Unfortunately C does not allow to create a function from within another function as to why nested functions are not a feature of C. **C++** however allows this through it's lambda functions:
 
-```C++
-void (*create_function())() {
-  return []() {
-    some_instruction;
-  }
-}
-
-void (*my_function)() = create_function();
-my_function();
-```
-
-Or by using a fancy pointer:
 ```C++
 std::function<void()> create_function() {
   return []() {
@@ -275,6 +281,8 @@ def do_something(x):
 
 Notice in the previous example how the return instruction occurs prior to calling recursively `do_something` one more time.
 
+#### Recursive function as a loop
+
 There is a theory in which recursion can replace while and for loops altogether.
 
 Classic for:
@@ -341,4 +349,18 @@ The order of the callback can be reverse as well by reversing these two lines:
 ```Python
 loop_callee(limit, callback, i=i+1)
 callback()  # now in reverse
+```
+
+#### Palindrome recursive call
+
+If you have to execute a number of steps and then execute them in reverse right after that, you can use both the forward and the backward call.
+
+```Python
+def some_function(limit, i):
+  if i >= limit:
+    return
+
+  some_instruction  # forward call
+  some_function(limit, i=i+1)  # recursive call
+  some_instruction  # backward call
 ```
