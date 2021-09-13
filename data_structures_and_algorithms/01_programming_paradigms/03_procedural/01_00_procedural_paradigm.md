@@ -137,7 +137,7 @@ void caller() {
 }
 ```
 
-### Inputs and outputs
+### Inputs and output
 
 Functions can receive parameters/arguments and return a single value,
 which technically represents the computation of the inputs, but it
@@ -166,6 +166,224 @@ Inside the procedures, more specific examples of operations include:
 * retrieve/change a register
 * make a network request
 * perform a heavy computation
+
+#### Amount and category of arguments
+
+The possibility of passing inputs to a procedure can be expanded even further by thinking about how many arguments and what kind of arguments are being passed.
+
+The two main categories are:
+* positional arguments - they must be passed exactly how they are expected in the procedure declared signature
+* key-value association arguments - they have specific labels attached to them and they can be passed in any order desired. These also allow for default value
+
+##### Sole positional argument
+
+We might want to send one argument.
+
+Example in Python:
+```Python
+def do_something(x: int) -> int:
+  return x * 2
+```
+
+Example in C:
+```C
+int do_something(int x) {
+  return x * 2;
+}
+```
+
+##### Multiple positional arguments
+
+Or we might want to send more arguments.
+
+Example in Python
+```Python
+def do_something(a: int, b: int, c: int) -> int:
+  return (a + b) * c
+```
+
+Example in C:
+```C
+int do_something(int a, int b, int c) {
+  return (a + b) * c;
+}
+```
+
+##### Indefinite positional arguments
+
+There might be cases where we don't know how many parameters a function will be called with, so the concept of an indefinite number of arguments seems like a fitting idea.
+
+```Python
+def do_something(*args: int):
+  x: int
+  for (x in args):
+    some_instruction
+
+do_something(11, 22)
+do_something(11, 22, 33, 44)
+```
+
+Unfortunately, C makes it difficult to express a pure call of indefinite arguments and usually, alongside a list of variable arguments, you have to pass also their count. This leads to a big problem, because it can be easy to send the wrong number of parameters being sent when calling the function, hence there is a lot of room for error.
+
+Example in C (ellipsis):
+```C
+#include <stdarg.h>
+int do_something(int n, ...)  // first param required by ISO C
+  va_list args;  // declares a list of arguments
+  va_start(args, n);  // copies the parameters into the args list
+
+  int x = 0;
+  for (int i = 0; i < n; i++) {
+    x = va_arg(args, int); // extracts the argument and casts it
+    some_instruction; // do something with x
+  }
+
+int main() {
+  do_something(3, 11, 22, 33);
+  return 0;
+}
+```
+
+In the previous example (ellipsis in C), the typing is also a problem, because you don't specify what type the passed parameters have, and that can result in some type-conversion problems when
+calling `va_arg`.
+
+The same ellipsis exists in C++ as well but for the sake of a better alternative let's look at variadic templates and arguments unpacking.
+
+Example in C++:
+```C++
+// T will be whatever type we want our arguments to have
+// Args is just a given type name for the args, it can be anything
+template <typename T, typename... Args>
+void do_something(Args... args) {
+
+  int n = sizeof...(Args);  // we get the size of all the arguments
+  T arr[] = {args...};  // we unpack the parameters into an array
+
+  // we iterate over the parameters
+  for (int i = 0; i < n; i++) {
+    some_instruction;  // that uses arr[i]
+  }
+}
+
+int main() {
+  do_something(11, 22, 33);
+  do_something(77, 88);
+  return 0;
+}
+```
+
+We can start to see here some real differences amongst programming languages in terms of syntax liberalization. Some languages make it easy to express something like a variadic, while others make it dangerous or verbose.
+
+There are other ways to send a variable number of arguments, like for example arrays or vectors. But that is a different discussion in itself.
+
+##### Key-value association arguments
+
+While positional arguments have their role, labeling parameters can give an advantage and clarity in code of what specific value we are passing to our procedure, ability especially useful in cases where we have a very high amount of positional arguments that make it hard to read.
+
+Example of a ugly procedure (in Python) with many positional arguments:
+```Python
+def do_something(
+   x: int, y: int, z: int,
+   r: int, g: int, b: int,
+   alpha: int,
+   frame: int
+):
+  instruction_1
+  instruction_2
+  ...
+
+do_something(10, 24, 33, 255, 0, 0, 125, 63162315)
+do_something(5, 3, 2, 127, 235, 95, 67, 582915)
+```
+
+While you could argue that once you've used the function several times you will remember which number represents what, that misses the point entirely, because readability is still sacrificed for a newbie, and you could make that newbie's life easier by making it explicit. There is also the factor of fatigue, and after programming for a long time it can become difficult to follow the long list of parameters.
+
+In Python at first hand we can just call the function `do_something` by specifically mentioning the names of the parameters:
+
+```Python
+do_something(
+  x=5, y=3, z=2,
+  r=127, g=235, b=95, alpha=67,
+  frame=582915,
+)
+```
+
+Python will know how to just redirect the values to the right arguments.
+
+You can even combine positional arguments with keyword arguments:
+
+```Python
+do_something(
+  5, 3, 2,  # still more visible than without any kwargs
+  alpha=67, frame=582915,
+  r=127, g=235, b=95
+)
+```
+
+We could also specify default values if we'd like to:
+```Python
+def do_something(
+   x: int = 0,
+   y: int = 0,
+   z: int = 0,
+   r: int = 255,
+   g: int = 255,
+   b: int = 255,
+   alpha: int = 100,
+   frame: int = 0
+):
+  instruction_1
+  instruction_2
+  ...
+```
+
+You can see in the previous examples how incredibly verbose the call of the function has become.
+
+Having default values for all arguments also means that we can call `do_something` without any parameters whatsoever.
+
+Using keyword arguments also means that we can call the function with the parameters positions completely scrambled.
+
+Other languages are not so allowing, and we don't actually have a direct method within C or C++ to do this. We do however have structs and classes. Let's see an example with struct.
+
+```C
+typedef struct {
+  int x;
+  int y;
+  int z;
+  int r;
+  int g;
+  int b;
+  int alpha;
+  int frame;
+} DoSomethingKwargs;
+
+int do_something(DoSomethingKwargs kwargs) {
+  // we can access like kwargs.argument_name
+  // instructions that use kwargs
+  instruction_1;
+  instruction_2;
+}
+
+int main() {
+  DoSomethingKwargs kwargs = {
+    .x=10, .y=25, .z=12,
+    .r=255, .g=0, .b=0, .alpha=100,
+    .frame=55221521
+  };
+  do_something(kwargs);
+  return 0;
+}
+```
+
+In C we are not allowed to pass the struct directly to the function, but have to store in a variable first. Alternatively in C++ you could do:
+
+```C++
+do_something({
+  .x=10, .y=25, .z=12,
+  .r=255, .g=0, .b=0, .alpha=100,
+  .frame=55221521
+});
+```
 
 ### Reusability
 
@@ -196,291 +414,3 @@ We now have the ability to unite various sequences together based on the purpose
 * low level operations that deal with essential operations
 * utility functions that reuse low level operations for specific patterns of operation
 * high-level / business logic that only preocupies itself with the essentials of functionality
-
-## Ways to combine procedures
-
-### Subroutine
-
-```C
-// define a subroutine
-void perform_instructions() {
-  instruction_1;
-  instruction_2;
-}
-
-void do_something() {
-  // call a subroutine from a routine
-  perform_instructions();
-}
-```
-
-### Callback
-
-We can pass a function to another function as an argument.
-
-Example in C:
-
-```C
-void do_something(
-  void (*some_function)()  // function pointer
-) {
-  some_function(); // call the callback
-}
-
-void do_this() {
-  instruction_1;
-  instruction_2;
-}
-
-void do_that() {
-  instruction_x;
-  instruction_y;
-}
-```
-
-Example in Python:
-
-```Python
-def do_something(some_function):
-  some_function()
-
-def do_this():
-  instruction_1
-  instruction_2
-
-def do_that():
-  instruction_x
-  instruction_y
-```
-
-At this point you will notice that this introduces variability in functionality, which we can further use to organise our functionalities in some interesting ways.
-
-The ability to pass a callback procedure to another procedure means that we can surround the callback function with pre and post operations.
-
-```Python
-def do_something():
-  instruction_x
-  instruction_z
-
-
-def do_extra_stuff(some_function):
-  pre_instruction_1
-  pre_instruction_2
-
-  some_function()
-
-  post_instruction_1
-  post_instruction_2
-
-do_extra_stuff(do_something)
-```
-
-### Returning a function
-
-If we are able to receive a function as a function, we surely should be able to return a function as a function.
-
-Example in C:
-```C
-void do_something() {
-  some_instruction;
-}
-
-void (*
-  give_function()  // our actual function definition
-)() {
-  return &do_something;
-}
-
-void (*some_function)() = give_function();
-
-some_function();
-```
-
-Explanation on the function that returns a function definition
-we have a function:
-
-We have a function:
-```C
-f1() {}
-```
-
-And this function returns a pointer.
-
-```C
-*f1() {}
-```
-
-Which can be the pointer of a function:
-
-```C
-void somef() {}
-
-void (*
-  f1()
-)() {
-  return &somef;
-};
-```
-
-
-Example in Python:
-```Python
-def do_something():
-  some_instruction
-
-def give_function():
-  return do_something
-
-some_function = give_function()
-some_function()
-```
-
-### Generating a function with a function
-
-Example in Python
-```Python
-def create_function():
-  def new_function():
-    some_instruction
-  return new_function
-
-my_function = create_function()
-my_function()
-```
-
-Unfortunately C does not allow to create a function from within another function as to why nested functions are not a feature of C. **C++** however allows this through it's lambda functions:
-
-```C++
-auto create_function() {
-  return [](){
-    some_instruction;
-  };
-}
-
-auto my_function = create_function();
-my_function();
-```
-
-Because of C's limitation, we start to see the differences between programming languages and how some built-in syntax changes the way we create and think about code.
-
-### Decorators
-
-The ability to add pre/post operations results on subsequent calls of the same caller/callee pair for the same wrapping done in different places, and in cases like these combine with the fact that we want to change something about how the caller calls the callee, we have to correct this in that multitude of places. We start to think that maybe there is a better way, a way to memorise this signature under an alias or as a masked function, and for sure there is, given the ability to create a function inside a function.
-
-Example in Python:
-```Python
-def do_this():
-  instruction_1
-  instruction_2
-
-def do_that():
-  instruction_x
-  instruction_y
-
-def wrap(wrapee):
-
-  def inner():
-    pre_instruction
-    wrapee()
-    post_instruction
-
-  return inner
-
-do_proxied_this = wrap(do_this)
-do_proxied_that = wrap(do_that)
-```
-
-Since C does not allow for lambda functions, let's see the example in C++:
-```C++
-
-void do_this() {
-  instruction_1;
-  instruction_2;
-}
-
-void do_that() {
-  instruction_x;
-  instruction_y;
-}
-
-wrap() {
-  return wrapper
-}
-
-void (*do_wrapped_this)() = wrap(&do_this);
-void (*do_wrapped_that)() = wrap(&do_that);
-```
-
-### Recursion
-
-We can call a function from within itself.
-
-```Python
-def do_something():
-  do_something()
-```
-
-Now do keep in mind that doing something like in the example before will result in the function calling itself infinitely and filling up the stack, eventually hitting the upper limit and triggering an error.
-
-Instead, you want to end the recursion at some point:
-
-```Python
-def do_something(x):
-  if x > 5:
-    return
-
-  do_something(x + 1)
-```
-
-Notice in the previous example how the return instruction occurs prior to calling recursively `do_something` one more time.
-
-There is a theory in which recursion can replace while and for loops altogether.
-
-Classic for:
-```Python
-for i in [0, 1, 2, 3, 4]:
-  instruction_x
-```
-
-Classic while:
-```Python
-while (i < 5):
-  instruction_x
-  i += 1
-```
-
-Recursive replacement (concrete):
-
-```Python
-def loop_instruction(i, limit):
-  if i >= limit:  # this will break the loop
-    return
-
-  instruction_x
-  loop_instruction(i + 1, limit)
-```
-
-Recursive replacement (callback):
-
-```Python
-def loop_callee(i, limit, callback):
-  if i >= limit:  # this will break the loop
-    return
-
-  callback()
-  loop_callee(i + 1, limit)
-
-
-def do_this():
-  instruction_1
-  instruction_2
-
-
-def do_that():
-  instruction_x
-  instruction_y
-
-
-loop_callee(0, 3, do_this)
-loop_callee(0, 2, do_that)
-```
