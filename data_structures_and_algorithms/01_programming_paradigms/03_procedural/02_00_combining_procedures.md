@@ -2,7 +2,13 @@
 
 ## Overview
 
+Since we have a new form of organising code under labels, let us explore:
+* how  the labeled procedures can be called from other procedures from within themselves
+* how we can pass what procedure to be executed
+by another procedure
+* how we can return a procedure from a procedure
 
+... and other more complex combinations
 
 ## Ways to combine procedures
 
@@ -158,13 +164,25 @@ my_function()
 Unfortunately C does not allow to create a function from within another function as to why nested functions are not a feature of C. **C++** however allows this through it's lambda functions:
 
 ```C++
-auto create_function() {
-  return [](){
+void (*create_function())() {
+  return []() {
+    some_instruction;
+  }
+}
+
+void (*my_function)() = create_function();
+my_function();
+```
+
+Or by using a fancy pointer:
+```C++
+std::function<void()> create_function() {
+  return []() {
     some_instruction;
   };
 }
 
-auto my_function = create_function();
+std::function<void()> my_function = create_function();
 my_function();
 ```
 
@@ -199,6 +217,7 @@ do_proxied_that = wrap(do_that)
 
 Since C does not allow for lambda functions, let's see the example in C++:
 ```C++
+#import <functional>
 
 void do_this() {
   instruction_1;
@@ -210,12 +229,21 @@ void do_that() {
   instruction_y;
 }
 
-wrap() {
-  return wrapper
+std::function<void()> wrap(
+  void (*wrapee)()
+) {
+  return [wrapee]() {
+    pre_instructions;  // pre
+    wrapee();  // infix
+    post_instructions;  // post
+  }
 }
 
-void (*do_wrapped_this)() = wrap(&do_this);
-void (*do_wrapped_that)() = wrap(&do_that);
+std::function<void()> do_wrapped_this = wrap(&do_this);
+do_wrapped_this();
+
+std::function<void()> do_wrapped_that = wrap(&do_that);
+do_wrapped_that();
 ```
 
 ### Recursion
@@ -259,23 +287,34 @@ while (i < 5):
 Recursive replacement (concrete):
 
 ```Python
-def loop_instruction(i, limit):
+def loop_instruction(limit: int, i: int = 0):
   if i >= limit:  # this will break the loop
     return
 
-  instruction_x
-  loop_instruction(i + 1, limit)
+  some_instruction_in_direct_order
+  loop_instruction(limit, i=i+1)  # recursive call
+  some_instruction_in_reverse_order
 ```
+
+Notice that instructions positioned before the recursive call are
+executed in the order `[i...limit]` while the instructions after it are executed in reverse order `[limit...i]`.
 
 Recursive replacement (callback):
 
 ```Python
-def loop_callee(i, limit, callback):
+from typing import Callable
+
+
+def loop_callee(
+  limit: int,
+  callback: Callable[[], None],
+  i: int = 0
+) -> None:
   if i >= limit:  # this will break the loop
     return
 
   callback()
-  loop_callee(i + 1, limit)
+  loop_callee(limit, callback, i=i+1)
 
 
 def do_this():
@@ -288,6 +327,12 @@ def do_that():
   instruction_y
 
 
-loop_callee(0, 3, do_this)
-loop_callee(0, 2, do_that)
+loop_callee(3, do_this)
+loop_callee(2, do_that)
+```
+
+The order of the callback can be reverse as well by reversing these two lines:
+```Python
+loop_callee(limit, callback, i=i+1)
+callback()  # now in reverse
 ```

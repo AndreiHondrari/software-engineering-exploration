@@ -228,7 +228,8 @@ Unfortunately, C makes it difficult to express a pure call of indefinite argumen
 Example in C (ellipsis):
 ```C
 #include <stdarg.h>
-int do_something(int n, ...)  // first param required by ISO C
+void do_something(int n, ...)  // first param required by ISO C
+{
   va_list args;  // declares a list of arguments
   va_start(args, n);  // copies the parameters into the args list
 
@@ -237,6 +238,7 @@ int do_something(int n, ...)  // first param required by ISO C
     x = va_arg(args, int); // extracts the argument and casts it
     some_instruction; // do something with x
   }
+}
 
 int main() {
   do_something(3, 11, 22, 33);
@@ -266,8 +268,8 @@ void do_something(Args... args) {
 }
 
 int main() {
-  do_something(11, 22, 33);
-  do_something(77, 88);
+  do_something<int>(11, 22, 33);
+  do_something<int>(77, 88);
   return 0;
 }
 ```
@@ -357,7 +359,7 @@ typedef struct {
   int frame;
 } DoSomethingKwargs;
 
-int do_something(DoSomethingKwargs kwargs) {
+void do_something(DoSomethingKwargs kwargs) {
   // we can access like kwargs.argument_name
   // instructions that use kwargs
   instruction_1;
@@ -413,4 +415,21 @@ We now have the ability to unite various sequences together based on the purpose
 
 * low level operations that deal with essential operations
 * utility functions that reuse low level operations for specific patterns of operation
-* high-level / business logic that only preocupies itself with the essentials of functionality
+* high-level / business logic that only preoccupies itself with the essentials of functionality
+
+## Define anonymous/lambda functions
+
+At times we might require to create a function on the fly, that can execute a sequence of instructions not needed anywhere else, its sole purpose being the need to enclose instructions in some sort of structure.
+
+Example in Python:
+```Python
+anonymous_function = lambda x, y: x + y
+result: int = anonymous_function(11, 22)
+```
+
+The C programming language does not have such ability but C++ does:
+
+```C++
+auto anonymous_function = [](int x, int y){return x+y;};
+int result = anonymous_function(11, 22);
+```
