@@ -417,7 +417,25 @@ We now have the ability to unite various sequences together based on the purpose
 * utility functions that reuse low level operations for specific patterns of operation
 * high-level / business logic that only preoccupies itself with the essentials of functionality
 
-## Define anonymous/lambda functions
+## First-class functions
+
+First-class functions are functions that can be used mostly just like that, in the sense that they can be assigned to variables and data structures, they can be passed to functions, they can be retrieved from functions etc.
+
+The concept of first-class function starts to intersect with the domain of λ-calculus and functional programming.
+
+As an introduction let's explore the following:
+
+```Python
+def do_something():
+  ...
+
+some_variable = do_something()
+some_variable()
+```
+
+This example opens the door to a myriad of possibilities in terms of what we can do with procedures.
+
+## Define anonymous functions
 
 At times we might require to create a function on the fly, that can execute a sequence of instructions not needed anywhere else, its sole purpose being the need to enclose instructions in some sort of structure.
 
