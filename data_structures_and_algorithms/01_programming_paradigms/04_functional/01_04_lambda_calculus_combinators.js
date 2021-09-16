@@ -28,6 +28,8 @@ let C = (f) => (
   )
 );
 
+let B = f => a => b => f(a(b));
+
 // TRUE
 let T = (x) => K(x);
 
@@ -47,7 +49,7 @@ let OR = (p) => ( (q) => p(T)(q) );
 let ALT_OR = (p) => ( (q) => p(p)(q) );
 
 // IF
-let IF = (cond) => C(cond);
+let IF = (cond) => B(C)(C)(cond);
 
 // EQ
 let EQ = (a) => ( (b) => a(b(T)(F))(b(F)(T)) );
@@ -83,19 +85,22 @@ console.log("M(I): ", M(I) );
 console.log("K(I): ", K(I) );
 
 // (K(I))(123)
-console.log("(K(I))(123): ", K(I)(123) );
+console.log("K I 123: ", K(I)(123) );
 
 // (K(M))(I)
-console.log("(K(M))(I): ", K(M)(I) );
+console.log("K M I: ", K(M)(I) );
 
 // (K(I))(M)
-console.log("(K(I))(M): ", K(I)(M) );
+console.log("K I M: ", K(I)(M) );
 
 // (K(111))(222) - select first
 console.log("K 111 222 (select first): ", K(111)(222) );
 
 // ((K(I))(111))(222)
 console.log("K I 111 222 (select second): ", K(I)(111)(222) );
+
+// KI(111)(222)
+console.log("KI 111 222 (select second): ", KI(111)(222));
 
 // K I M K
 console.log("K I M K: ", K(I)(M)(K) );

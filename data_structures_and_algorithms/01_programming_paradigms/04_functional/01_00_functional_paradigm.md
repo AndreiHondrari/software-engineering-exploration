@@ -137,16 +137,88 @@ Purity and impurity is a characteristic based on various factors:
   * no change of local variables (or local state)
   * no change of IO state
   * no change of referenced arguments
-* the function is idempotent, or has referential transparency, meaning that for a given set of inputs, there will always be the same output, making the function deterministic
+* the function is idempotent, meaning that for a given set of inputs, there will always be the same output, making the function deterministic
   * the input to output idempotence also allows for memoization as a further step in optimising the access to frequent values, calculating ones, memorising it somewhere, and then retrieving it as the same inputs occur
 * since there is no data dependency between two functions, not being able to change non-local state, that makes the functions very good candidates for parallelism, being thread-safe. Thread unsafety comes with shared data whose access to must be restricted by various mechanisms (locks, semaphores, mutexes, etc.)
 
+### Referential transparency
 
-## Optimisation
+Refers to the avoidance of changing or depending on non-local state, making the function deterministic.
 
-When it comes to pure functions, compilers have techniques to optimise the execution of the code by doing certain transformations.
+Referential transparent:
+```Python
+def do_something(x):
+  return x + 5
+```
+
+```text
+a == b
+do_something(a) == do_something(b)
+```
+
+Referential opaque:
+```Python
+k = 1
+def do_something(x):
+  k = k + 1
+  return x + k
+```
+
+```text
+a == b
+do_something(a) != do_something(b)
+```
+
+### Recursion
+
+All loops (for/while) found in imperative languages are replaceable by recursive functions in functional programming as long as the recursion makes use of the tail-call optimisation.
+
+Contrary to procedural recursive calls, which create a new frame for each level of recursive call, in functional programming it is necessary to make use of tail call optimisation, where the compiler recognises the existence of a recursive tail call and creates only one stack frame, hence the function can run infinitely without ever running into a stack overflow. You may think that this could be a problem, especially because each stack frame was a snapshot of each run of the function, memorising the local state being operated with, which is only a problem in a stateful algorithm, but if the algorithm relies solely on immutable data, mapping inputs to outputs, then at the machine code level, the only sequence of operations needed are calculation, replace parameters, jump to beginning of the function.
+
+Example of non-tail call
+```Python
+def sum_up_to(x):
+  return 0 if x == 0 else (sum_up_to(x - 1) + x)
+```
+
+Execution visualisation of this non-tail call (for `sum_up_to(4)`):
+```
+call sum_up_to(4)
+  call sum_up_to(3)
+    call sum_up_to(2)
+      call sum_up_to(1)
+        call sum_up_to(0)
+        return 10
+      return 10
+    return 10
+  return 10
+return 10
+```
+
+Example of tail call
+```Python
+def sum_up_to(x, amount):
+  return amount if x == 0 else sum_up_to(x - 1, amount + x)
+```
+
+Execution visualisation of this tail call (for `sum_up_to(4, 0)`):
+
+```
+call sum_up_to(4, 0)
+  replace args with 3, 4
+  jump to sum_up_to
+  replace args with 2, 7
+  jump to sum_up_to
+  replace args with 1, 9
+  jump to sum_up_to
+  replace args with 0, 10
+  jump to sum_up_to
+  return 10
+return 10
+```
 
 ### Common-subexpression elimination
+In the case of pure functions the compiler can do some extra optimisations like the common-subexpression elimination.
 
 If the compiler detects two expressions like:
 ```C
@@ -161,4 +233,179 @@ x = tmp + p;
 y = tmp + q;
 ```
 
-### Tail call elimination
+## Currying
+
+Instead of calling a function with multiple arguments, call it subsequently with one argument at a time.
+
+Normal function:
+```JS
+function do_something(a, b, c) {
+  return a + b + c;
+}
+do_something(1, 2, 3);
+```
+
+Curried function:
+```JS
+let do_something = (a) => (
+  (b) => (
+    (c) => a + b +c
+  )
+);
+
+do_something(1)(2)(3);
+```
+
+or shorthand definition
+```JS
+let do_something = a => b => c => a + b + c;
+```
+
+## λ-calculus
+
+Since a function is curried this opens the door to λ-calculus, which is a form of mathematics that deals with functions and their composition.
+
+The possibility of doing function composition stems from the fact that a curried function accepts only one parameter at a time. Composition works by:
+`(f•g)(x) = f(g(x))` essentially mapping the output of `g(x)` to `f(x)`. The composition itself represents a new operation.
+
+Let's assume we have an incrementer function:
+```JS
+let increment = x => x + 1;
+```
+
+then it's composition of three times
+
+```JS
+increment(increment(increment(1)))
+```
+
+results in 3.
+
+We can save this operation under a different name, but before we need to define a compose function that applies one function to another:
+
+```JS
+let compose = f1 => f2 => arg => f1(f2(arg));
+let offset_by_2 = compose(increment)(increment);
+offset_by_2(1)  // shows 3
+```
+
+or we can compose even further (`f1•f2•f3 = f1(f2(f3))`):
+```JS
+let offset_by_3 = compose( compose(increment)(increment) )(increment);
+```
+or
+```JS
+let offset_by_3 = compose(offset_by_2)(increment);
+```
+
+### Combinators
+
+In lambda calculus there is the term of combinator, which is a function that has no free variables. Free variables are variables that exist in the body of the function, but is not bound via the arguments.
+
+#### Types of combinators
+
+##### I. Identity combinator - return itself
+
+Form `I := λx.x`
+
+```JS
+let I = x => x;
+```
+
+##### M. Mockingbird combinator - apply on itself
+
+Form `M := λf.ff` alternatively `f(f)`
+
+```JS
+let M = f => f(f);
+```
+
+##### K. Kastrel combinator - use the first, ignore the second
+
+Form `K := λab.a`
+
+```JS
+let K = a => b => a;
+```
+
+##### KI. Kite combinator - ignore the first, use the second
+
+Form `KI := λab.b`
+
+```JS
+let KI = a => b => b;
+```
+
+##### C. Cardinal combinator - the parameter flip
+
+Form `C := λfab.fba` alternatively `f(b)(a)`
+
+```JS
+let C = f => a => b => f(b)(a);
+```
+
+##### B. Bluebird combinator - aplies arg to second function and then to the first
+
+Form `B := λfab.f(ab)` alternatively `f(a(b))`
+
+```JS
+let B = f => a => b => f(a(b))
+```
+
+##### T. Thrush combinator - calls second with first as param
+
+Form `T := λab.ba`
+
+```JS
+let T = a => b => b(a);
+```
+
+##### V. Vireo combinator
+
+Form `V := λabf.fab`
+
+```JS
+let V = a => b => f => f(a)(b);
+```
+
+#### BL. Blackbird combinator
+
+Form `BL := λfgab.f(gab)`
+
+```JS
+let BL = f => g => a => b => f(g(a)(b));
+```
+
+#### S. Starling combinator
+
+Form `S := λabc.ac(bc)`
+
+```JS
+let S = a => b => c => a(c)(b(c));
+```
+
+### Some pragmatic examples of λ-calculus combinators
+
+Now that we've defined some fundamental combinators, let's see what we can do with them.
+
+It seems that our compose function is actually the equivalent of the **B combinator**.
+
+```JS
+let offset_by_2 = B(B(increment)(increment))(increment);
+```
+
+Exponents:
+```JS
+let quadratic = x => x * x;
+let quartic = B(quadratic)(quadratic);
+let octic = B(quartic)(quadratic);
+```
+
+Conditionals:
+
+```JS
+let FIRST = K;
+let SECOND = KI;
+p = // ... FIRST or SECOND
+let IF = C(p)(111)(222);
+```
