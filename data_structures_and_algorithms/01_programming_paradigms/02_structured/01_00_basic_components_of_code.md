@@ -308,5 +308,4 @@ if (expression_1 ^ expression_2) {
 
 ## Parametrisation of the control of the flow
 
-Having the ability to base the flow of our execution on given variable inputs,
-we can
+Having the ability to base the flow of our execution on given variable inputs, we can

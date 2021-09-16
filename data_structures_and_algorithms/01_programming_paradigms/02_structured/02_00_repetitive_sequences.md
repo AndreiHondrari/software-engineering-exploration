@@ -203,6 +203,28 @@ for (int i = 50; i < 100)  // 50 .. 99 (50 elements, second half of 100)
 }
 ```
 
+There could also be a scenario where the sequences inside the loop operate at different stages of the range, usually by conditioning them from min range to max range. In such cases it might be wise to simply split the for into ranges and ditch the conditionals. The motivation is to remove those extra conditional operations that add to the execution time.
+
+Wasteful:
+```Python
+for (i = 0; i < N; i++):
+  if i < 50:
+    instruction_set_1
+
+  if i >= 77:
+    instruction_set_2
+```
+
+Optimised:
+```Python
+for (i = 0; i < 50; i++):
+  instruction_set_1
+
+for (i = 77; i < N; i++):
+  instruction_set_2
+```
+
+
 ## Note about ranges
 
 Usually we count from 1 to n, and depending on the value of n, if we want to split the interval to a given ratio we have to consider some aspects of the limits.
@@ -231,6 +253,62 @@ or
 * 4, 5, 6 - second range
 
 It is really up to the programmer to determine in what way he wants to operate with the ranges and how to distribute them.
+
+## Fission / Fusion of loops
+
+Let's assume that we have a loop that executes two heavy sequences, that are independent. We can isolate the two sequences in two distinct identical for loops, allowing us to port the code so it can be executed in parallel. This operation is called fission, or distribution.
+
+Now obviously, if you have two adjacent loops that iterate over the same range, but isolate different sequences, those two can be fused together into a single loop with both of the instruction sequences lying underneath.
+
+Fission / distribution:
+```Python
+for (i = 0; i < N; i++):
+  instruction_1
+  instruction_2
+  # ...
+
+  instruction_x
+  instruction_y
+  # ...
+```
+
+Fussion:
+```Python
+# on one parallel track or adjacent
+for (i = 0; i < N; i++):
+  instruction_1
+  instruction_2
+  # ...
+
+# on a secondary parallel track or adjacent
+for (i = 0; i < N; i++):
+  instruction_x
+  instruction_y
+  # ...
+```
+
+## Loop-invariant code motion
+
+At times we might have an instruction inside the loop that always evaluates to the same value. Iterating over this instruction, triggering it's execution every time is in fact resource wasteful and it is better to move this operation outside of the loop.
+
+Wasteful (runs slow):
+```Python
+for (i = 0; i < N; i++):
+  result1 = heavy_invariant_instruction_1
+  result2 = heavy_invariant_instruction_2
+  other_instruction_1
+  other_instruction_2
+```
+
+Optimised (runs fast):
+```Python
+result1 = heavy_invariant_instruction_1
+result2 = heavy_invariant_instruction_2
+
+for (i = 0; i < N; i++):
+  other_instruction_1
+  other_instruction_2
+```
 
 ## Nested loops
 
