@@ -3,7 +3,6 @@ let KI = (a) => ((b) => (b));
 let C = f => a => b => f(b)(a);
 let B = f => a => b => f(a(b));
 
-
 let FIRST = x => K(x);
 let SECOND = x => KI(x);
 

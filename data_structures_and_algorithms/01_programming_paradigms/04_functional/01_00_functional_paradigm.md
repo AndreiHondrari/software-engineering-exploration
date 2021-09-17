@@ -300,7 +300,7 @@ let offset_by_3 = compose(offset_by_2)(increment);
 
 ### Combinators
 
-In lambda calculus there is the term of combinator, which is a function that has no free variables. Free variables are variables that exist in the body of the function, but is not bound via the arguments.
+In lambda calculus there is the term of combinator, which is a function that has no free variables. Free variables are variables that exist in the body of the function, but are not bound via the arguments.
 
 #### Types of combinators
 
@@ -391,7 +391,7 @@ Now that we've defined some fundamental combinators, let's see what we can do wi
 It seems that our compose function is actually the equivalent of the **B combinator**.
 
 ```JS
-let offset_by_2 = B(B(increment)(increment))(increment);
+let offset_by_3 = B(B(increment)(increment))(increment);
 ```
 
 Exponents:
