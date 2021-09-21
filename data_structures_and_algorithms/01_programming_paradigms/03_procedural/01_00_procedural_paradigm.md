@@ -451,3 +451,19 @@ The C programming language does not have such ability but C++ does:
 auto anonymous_function = [](int x, int y){return x+y;};
 int result = anonymous_function(11, 22);
 ```
+
+## Pass a context
+
+Let's assume we want our procedure to get a collection of data fields and alter them based on themselves and possibly some other additional inputs.
+
+```C
+typedef struct {
+  int x;
+} Context;
+
+void do_something(Context * context) {
+  context->x = 11;
+}
+```
+
+Which is kind of like object oriented programming, but without classes.
