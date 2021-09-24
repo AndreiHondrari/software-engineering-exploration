@@ -6,7 +6,7 @@ def decode(
 ) -> Tuple[bool, bool]:
     a = not x
     b = x
-    return (a, b,)
+    return a, b
 
 
 if __name__ == '__main__':
