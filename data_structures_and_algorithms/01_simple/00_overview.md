@@ -12,5 +12,10 @@ Simple data types:
 
 Algorithms for booleans / single bits:
 
-* basic boolean algebra
 * bit value exchange
+* bit flip
+* alternation
+* cascade
+* mux
+* demux
+* decode
