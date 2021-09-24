@@ -137,7 +137,7 @@ void caller() {
 }
 ```
 
-### Inputs and output
+### Inputs and outputs
 
 Functions can receive parameters/arguments and return a single value,
 which technically represents the computation of the inputs, but it
@@ -385,6 +385,128 @@ do_something({
   .r=255, .g=0, .b=0, .alpha=100,
   .frame=55221521
 });
+```
+
+#### Void, single and multiple outputs
+
+Most functions can definitely return nothing or at least one value.
+
+Examples in Python:
+```Python
+def don_not_return_anything() -> None:
+  ...
+
+def obtain_value() -> int:
+  return 12
+```
+
+Examples in C:
+```C
+void do_not_return_anything() {
+  ...
+}
+
+int obtain_value() {
+  return 12;
+}
+```
+
+Analogous to hardware modules, that have multiple wires going in as well as out, we should be able to return multiple values from a function as well. By default some of the languages don't support this through the syntax, and the answer is in returning lists, arrays, tuples, structs, dictionaries or hash maps.
+
+Example in Python:
+```Python
+def obtain_values() -> Tuple[int, int]:
+  return 11, 22
+
+a, b = obtain_values()
+```
+
+Example in C:
+```C
+int * obtain_values() {
+  static int results[2] = {1, 2};
+  return results;
+}
+
+int * results = obtain_values();
+int a = results[0];
+int b = results[1];
+```
+
+Examples with named structures.
+
+Example with dict in Python:
+```Python
+def obtain_dict() -> Dict[str, int]:
+    return {
+        'a': 11,
+        'b': 22,
+    }
+
+res = obtain_dict()
+a = res['a']
+b = res['b']
+```
+
+Example with namedtuple in Python:
+```Python
+from collections import namedtuple
+
+ResultTuple = namedtuple("ResultTuple", ['a', 'b'])
+
+def obtain_named_tuple() -> ResultTuple:
+    return ResultTuple(a=11, b=22)
+
+res = obtain_named_tuple()
+a = res.a
+b = res.b
+```
+
+Example with class/dataclass in Python:
+```Python
+from dataclasses import dataclass
+
+@dataclass
+class Result:
+    a: int
+    b: int
+
+def obtain_dataclass() -> Result:
+    return Result(a=11, b=22)
+
+res = obtain_named_tuple()
+a = res.a
+b = res.b
+```
+
+Example with struct in C:
+```C
+typedef struct {
+  int a;
+  int b;
+} Result;
+
+
+Result obtain_values() {
+  Result result = {.a = 11, .b = 22};
+  return result;
+}
+
+Result result = obtain_values();
+int a = result.a;
+int b = result.b;
+```
+
+And since there is the ability to pass an indefinite amount of input arguments, we should be able to return an indefinite amount of outputs as well.
+
+Example in Python:
+```Python
+def obtain_many_values() -> Tuple[int]:
+  result = list()
+  ... instructions that add to the result list
+  return tuple(result)
+
+values = obtain_many_values()
 ```
 
 ### Reusability
