@@ -31,7 +31,7 @@ def extract_bits_from_msb(
 
 
 if __name__ == '__main__':
-    a = 0b01010110
+    a = 0b11111111
 
     res1: int = extract_bits_from_msb(a, 0, 0)
     res2: int = extract_bits_from_msb(a, 0, 8)
