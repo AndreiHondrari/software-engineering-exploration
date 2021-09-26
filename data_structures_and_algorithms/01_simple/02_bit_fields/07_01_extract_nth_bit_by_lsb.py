@@ -7,11 +7,11 @@ if __name__ == '__main__':
     a = 0b00010000
 
     # extract the nth bit field (the only 1 bit)
-    N = 5
+    N = 4  # counting from 0 to 7
     nth_bit = (
         (
             (
-                a >> (N - 1)  # shift to LSB position the Nth bit
+                a >> N  # shift to LSB position the Nth bit
             ) & 0b1  # mask it out
         ) != 0b0  # detect non-nullability
     )
