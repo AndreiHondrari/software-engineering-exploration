@@ -8,15 +8,15 @@ if __name__ == '__main__':
     a = INITIAL
 
     # extract halves
-    first_half = a & 0b11110000
-    second_half = a & 0b00001111
+    first_nibble = a & 0b11110000
+    second_nibble = a & 0b00001111
 
     # shift positions
-    first_half = first_half >> 4
-    second_half = second_half << 4
+    first_nibble = first_nibble >> 4
+    second_nibble = second_nibble << 4
 
     # recombine -> to 1001 0110
-    a = first_half | second_half
+    a = first_nibble | second_nibble
 
     print(f"INITIAL {INITIAL:#0{10}b}")
     print(f"FINAL   {a:#0{10}b}")
