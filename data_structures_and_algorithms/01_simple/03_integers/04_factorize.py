@@ -16,7 +16,15 @@ def factorize(n: int) -> List[int]:
 
 
 if __name__ == '__main__':
-    n = 2**5 * 3**3 * 5**3 * 7**2 * 11**9 * 53155123
-    results = factorize(n)
-    print(f"Factorize {n}")
-    print(results)
+    numbers = [
+        2**5 * 3**3 * 5**3 * 7**2 * 11**9 * 53155123,
+        130,
+        720,
+        730,
+        840,
+    ]
+
+    for n in numbers:
+        results = factorize(n)
+        print(f"Factorize {n}")
+        print(results, end="\n\n")
