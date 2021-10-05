@@ -20,6 +20,22 @@ def gcd(a: int, b: int) -> int:
 
 
 def lcm(a: int, b: int) -> int:
+    """
+    Calculate the lcm with a formula based on gcd.
+
+                 a * b
+    lcm(a,b) = ----------
+                gcd(a, b)
+
+    Example:
+    4 = 2 * 2
+    6 = 2 * 3
+
+    4 * 6   2 * 2 * 2 * 3
+    ----- = ------------- = 2 * 2 * 3 = 12
+      2           2
+
+    """
     assert a > 0 and b > 0, "Values must be greater than 0"
 
     return (a * b) // gcd(a, b)

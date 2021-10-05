@@ -2,7 +2,22 @@ from typing import List
 
 
 def make_primes(limit: int) -> List[int]:
+    """
+    Generate a list of primes by eliminating the multiples of the currently
+    discovered primes.
+
+    - Create a mark list of all numbers from 0 to limit,
+      initialized with False.
+    - Iterate from 2 to limit and check if it was marked, if it is not marked
+      then it is a prime. Mark out all multiples of the current prime
+      by iterating from itself + 1 to limit (in the process ignore the values
+      marked as non-prime).
+    """
     primes: List[int] = []
+
+    # list goes from 0 to limit
+    # 0 and 1 are never used, they exist only
+    # for positional purposes
     mark_list = [False for _ in range(limit + 1)]
     for i in range(2, limit + 1):
 

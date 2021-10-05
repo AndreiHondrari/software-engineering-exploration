@@ -2,6 +2,12 @@ from time import time
 
 
 def gcd(a: int, b: int) -> int:
+    """
+    Divide both of the numbers by each value that is less than
+    the smallest of the two numbers (gcd can't be larger than
+    the smallest), counting downwards.
+    When both divisions yield no remainder, the divider is the gcd.
+    """
     min_val = min(a, b)
 
     for x in range(min_val, 0, -1):

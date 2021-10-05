@@ -1,8 +1,11 @@
 from time import time
+from decimal import Decimal as D
 
 
 def sum_of_squares_until_limit(limit: int) -> int:
-    return 0
+    return int(
+        D(limit * (limit + 1) * (2 * limit + 1)) / D(6)
+    )
 
 
 if __name__ == '__main__':

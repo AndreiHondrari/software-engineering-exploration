@@ -2,6 +2,27 @@ from time import time
 
 
 def gcd(a: int, b: int) -> int:
+    """
+    Based on division with remainders.
+
+    Example:
+    18 = 3 * 3 * 2
+    45 = 3 * 3 * 5
+
+    Obviously by looking at the factors, the gcd is 3 * 3 = 9.
+    To discover it algorithmically one must divide and use the remainder
+    as next in line for division.
+
+    We always start with the bigger number:
+    45 / 18 = 2 remainder 9
+    18 / 9 = 2 remainder 0
+
+    Because the remainder is 0, we don't need to divide any longer.
+    It also means that 45 = 18 * (2 + 1/2).
+
+    The 1/2 is the remainder that we are interested in, which is the gcd
+    of the two. 18 * 1/2 = 9 = 3 * 3 .
+    """
     assert a > 0 and b > 0, "Values must be greater than 0"
     m = min(a, b)
     n = max(a, b)

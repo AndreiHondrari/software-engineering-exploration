@@ -1,3 +1,9 @@
+"""
+Gcd of multiple numbers is achieved by composing the gcd calls.
+The result of the gcd of numbers 'a' and 'b' can be used as
+a parameter for the gcd with 'c'.
+The resulting gcd will be the gcd of a, b, and c.
+"""
 from time import time
 
 

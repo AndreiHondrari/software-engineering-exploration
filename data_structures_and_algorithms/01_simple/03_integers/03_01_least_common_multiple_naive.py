@@ -2,6 +2,11 @@ from time import time
 
 
 def lcm(a: int, b: int) -> int:
+    """
+    Multiply each of the numbers one by one, alternatively based on the
+    comparison between the two, until equilibrium is reached.
+    The number found in the equilibrium is the least common multiple.
+    """
     assert a > 0 and b > 0, "Values must be greater than 0"
 
     x = a

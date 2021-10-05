@@ -1,6 +1,10 @@
 
 
 def reverse(n: int) -> int:
+    """
+    Reverse number by iteratively dividing with 10 until 0,
+    extracting the right most digit each step of the process.
+    """
     reversed = 0
     while n > 0:
         reversed = 10 * reversed + n % 10
@@ -9,6 +13,9 @@ def reverse(n: int) -> int:
 
 
 def is_palindrome(n: int) -> bool:
+    """
+    A palindrome number equals its mirror.
+    """
     return n == reverse(n)
 
 

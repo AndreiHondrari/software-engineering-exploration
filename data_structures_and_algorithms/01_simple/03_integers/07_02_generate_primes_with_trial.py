@@ -3,6 +3,16 @@ from typing import List
 
 
 def is_prime(n: int) -> bool:
+    """
+    Checks if a number is not prime by looking at:
+    - if it is 1
+    - if it is a multiple of two
+    - if it is a perfect square
+    - if the integer values smaller than the square root of our number are
+      factors of our number
+
+    If all those conditions are passed, then our number is prime.
+    """
 
     if any([
         # 1 is not a prime
@@ -37,6 +47,16 @@ def is_prime(n: int) -> bool:
 
 
 def make_primes(limit: int) -> List[int]:
+    """
+    Generate a list of primes from 2 to limit by doing trial
+    evaluation of the numbers.
+
+    This method is faster than the Sieve of Eratosthenes due to:
+    - ose of a less nested for-looping
+    - use of a very small range (0 to square root of the value)
+    - use of preconditions that filter out obvious non-primes
+      (1, even numbers, perfect squares)
+    """
     primes: List[int] = []
     for n in range(2, limit+1):
         if is_prime(n):
