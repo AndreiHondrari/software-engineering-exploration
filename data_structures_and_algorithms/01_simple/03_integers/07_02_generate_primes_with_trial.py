@@ -37,7 +37,7 @@ def is_prime(n: int) -> bool:
         # make it a prime, or if k is bigger than the root, then the resulting
         # product would be greater than our number, hence we are not
         # interested in those values.
-        for k in range(2, int(root)):
+        for k in range(2, int(root) + 1):
             if n % k == 0:
                 return False
     else:
