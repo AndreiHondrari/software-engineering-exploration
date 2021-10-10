@@ -2,14 +2,65 @@
 
 ## Overview
 
+A **data structure** is a representation of information that can be operated upon in unique ways. Each data structure serves a specific purpose.
+
 An **algorithm** is a well-defined recipe that defines the execution of a computational machine.
 
+Purposes of data structures:
+* represent a single value
+* represent a collection of similar values
+* represent operations that can be performed on itself
+* represent a hierarchy of values
+* store information (temporary or permanent)
+* facilitate information passing
+* serve as temporary information holder for multi-stage algorithms
+* serve as a reference for comparison
+* serve as a container for iterative processes
+* serve as a container for results
+* serve as a duplicate
+* byproduct of an operation (unary, binary, n-ary)
+* serve as a means to speed up subsequent processes or algorithms
+
 Purposes of an algorithm:
-* calculation - obtain results
-* data processing - transform data
-* automatic reasoning - do this, do that
+* evaluate
+* iterate
+* match
+* count
+* search
+* change
+* sort
+* swap
+* invert
+* reverse
+* generate/create
+* copy
+* remove
+* compute
+* concatenate
+* merge
+* decompose
+* extract
+* convert
+* decide
+* dispatch
+* learn
+* control
+* gather
+* analyse
 
 ## Classification
+
+### Classification of data structures
+
+* **primitives**
+  * **bit**
+  * **bitfield**
+  * **integer**
+  * **floating point number**
+  * **character** (essentially a small integer - max value of 255)
+
+
+### Classification of algorithms
 
 By implementation:
 * **serial** - a sequence of instructions
