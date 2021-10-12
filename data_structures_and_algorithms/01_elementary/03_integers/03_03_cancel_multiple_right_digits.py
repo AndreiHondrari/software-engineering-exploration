@@ -1,4 +1,9 @@
+"""
+We can force multiple rightmost digits by subtracting from the number
+a number representing those digits.
 
+123456 - 456 = 123000
+"""
 
 if __name__ == '__main__':
 

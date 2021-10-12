@@ -1,4 +1,9 @@
+"""
+The remainder of the division of a number and 10 is the rightmost digit of
+our number.
 
+159 % 10 = 9
+"""
 
 if __name__ == '__main__':
     numbers = [

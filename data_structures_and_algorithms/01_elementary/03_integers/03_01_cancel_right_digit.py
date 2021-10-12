@@ -1,4 +1,8 @@
+"""
+We can force the rightmost digit to 0 by subtracting from it its last digit.
 
+5678 - 8 = 5670
+"""
 
 if __name__ == '__main__':
 

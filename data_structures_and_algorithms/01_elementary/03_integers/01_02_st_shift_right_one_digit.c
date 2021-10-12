@@ -1,3 +1,9 @@
+/*
+Shifting right a number while discarding the right digit can be done by
+integer division. In C there is no explicit integer division operator so
+instead we just divide by 10 and then cast the result to integer,
+discarding the fractional part of the resulting value.
+*/
 #include <stdio.h>
 
 
