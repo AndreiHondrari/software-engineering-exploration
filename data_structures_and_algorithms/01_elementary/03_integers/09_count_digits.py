@@ -1,7 +1,6 @@
 
 
 def count_digits(n: int) -> int:
-    # count digits
     total_digits_count: int = 0 if n > 0 else 1
     n_copy: int = n
     while n_copy > 0:
