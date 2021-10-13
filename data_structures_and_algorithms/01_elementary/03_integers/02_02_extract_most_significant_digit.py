@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     for n in numbers:
         # count digits
-        count: int = 0
+        count: int = 0 if n > 0 else 1
         n_copy: int = n
         while n_copy > 0:
             n_copy = n_copy // 10
