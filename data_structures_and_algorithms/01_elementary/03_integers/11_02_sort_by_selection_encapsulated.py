@@ -51,8 +51,9 @@ def swap_digits(
 def selection_sort(
     collection: Any,
     size: int,
-    swap_func: Callable[[Any, int, int], Any],
     extract: Callable[[Any, int], Any],
+    compare_func: Callable[[Any, Any], Any],
+    swap_func: Callable[[Any, int, int], Any]
 ) -> Any:
     sorted_collection = deepcopy(collection)
 
@@ -61,16 +62,33 @@ def selection_sort(
             element_1 = extract(sorted_collection, i)
             element_2 = extract(sorted_collection, j)
 
-            if element_1 < element_2:
+            if compare_func(element_1, element_2):
                 sorted_collection = swap_func(sorted_collection, i, j)
 
     return sorted_collection
+
+
+def compare_direct(x: int, y: int) -> bool:
+    return x < y
+
+
+def compare_reverse(x: int, y: int) -> bool:
+    return x > y
 
 
 if __name__ == '__main__':
     a: int = 741672910385089
     no_of_digits: int = count_digits(a)
 
-    x: int = selection_sort(a, no_of_digits, swap_digits, extract_from_number)
+    x: int = selection_sort(
+        a, no_of_digits,
+        extract_from_number, compare_direct, swap_digits
+    )
+
+    y: int = selection_sort(
+        a, no_of_digits,
+        extract_from_number, compare_reverse, swap_digits
+    )
 
     print(f"{a} -> {x}")
+    print(f"{a} -> {y}")
