@@ -62,6 +62,9 @@ CHANGE / OVERWRITE
 * intersect with another array from first
 * intersect with another array from last
 * intersect with another array from offset from first
+* intersect with copy
+* intersect multiple at offset
+* intersect with list of indexes
 
 RE-ORDER
 --------------
