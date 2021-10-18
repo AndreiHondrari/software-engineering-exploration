@@ -10,7 +10,7 @@ int main(int argc, char const *argv[]) {
   unsigned int new_items_size = sizeof(new_items)/sizeof(int);
   unsigned int new_size = l1_size + new_items_size;
 
-  unsigned int l2[][new_size];
+  unsigned int l2[new_size];
 
   // Notice that copy of the original goes from 0 ... (l1_size - 1)
   for (int i = 0; i < l1_size; ++i) {

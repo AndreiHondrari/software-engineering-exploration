@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
   unsigned int l1_size = sizeof(l1)/sizeof(int);
   unsigned int new_size = l1_size + 1;
 
-  unsigned int l2[][new_size];
+  unsigned int l2[new_size];
 
   // add elements before offset
   for (int i = 0; i < OFFSET; ++i) {

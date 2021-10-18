@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
   unsigned int new_items_size = sizeof(new_items)/sizeof(int);
   unsigned int new_size = l1_size + new_items_size;
 
-  unsigned int l2[][new_size];
+  unsigned int l2[new_size];
 
   // add elements before offset
   for (int i = 0; i < OFFSET; ++i) {
