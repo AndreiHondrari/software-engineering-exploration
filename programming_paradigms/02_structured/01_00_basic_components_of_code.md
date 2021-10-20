@@ -125,7 +125,7 @@ else {
 ```
 
 
-### Reducing conditioned sequence
+### Reducing/transposing conditioned structures of sequences
 
 It might be desirable at times to reduce such constructs to simpler alternatives. To exemplify this, let us define the following logic operations:
 * AND noted as **&&**
@@ -139,7 +139,7 @@ Examples (where **a** and **b** are boolean values: **true**/**false**):
 * `!a`
 * `a ^ b`
 
-### Reduce two IF-conditioned sequences with similar condition
+### Transpose two IF-conditioned structured sequences with similar condition
 
 Let's assume we have the two following sequences:
 
@@ -163,8 +163,90 @@ if (some_expression) {
 }
 ```
 
+### Two sequential IF-conditioned structures of sequences (not mutable)
+
+This kind of sequence of IF-blocks:
+
+```C
+if (some_expression_1) {
+  instruction_1;
+  instruction_2;
+}
+
+if (some_expression_2) {
+  instruction_1;
+  instruction_2;
+}
+```
+
+Should **NOT** be mutated to a different structure of sequences because
+the sets of the instructions are supposed to be executed one after another
+under certain circumstances. Eliminating the duplication of the
+instruction sets can be approached with procedural programming.
+
+Actually the same goes for sequential IF-ELSE structures
+
+```C
+if (some_expression_1) {
+  instr_set_1;
+}
+else {
+  instr_set_2;
+}
+
+if (some_expression_2) {
+  instr_set_1;
+}
+else {
+  instr_set_2;
+}
+```
+
+Which should **NOT** be altered into something else as well.
+
+### Transpose IF-ELSE structure to IF expressions
+
+From
+
+```C
+if (some_expression) {
+  instruction_1;
+  instruction_2;
+}
+else {
+  instruction_3;
+  instruction_4;
+}
+```
+
+To
+
+```C
+if (some_expression) {
+  instruction_1;
+  instruction_2;
+}
+
+if (!some_expression) {
+  instruction_3;
+  instruction_4;
+}
+```
+
 ### Reduce a nested IF-conditioned sequences
 To reduce a positive branch nested if, we simply chain the expressions together under a single if.
+
+from
+
+```C
+if (level_1_logic_expression) {
+  if (level_2_logic_expression) {
+    instruction_1;
+  }
+}
+```
+
+to
 
 ```C
 if (level_1_logic_expression && level_2_logic_expression) {
@@ -308,4 +390,4 @@ if (expression_1 ^ expression_2) {
 
 ## Parametrisation of the control of the flow
 
-Having the ability to base the flow of our execution on given variable inputs, we can
+Having the ability to base the flow of our execution on given variable inputs, we can dynamically alter the overall execution of our entire program in a variety of ways.
