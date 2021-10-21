@@ -1,3 +1,14 @@
+"""
+Notice that if the arrays don't have items in order,
+the resulting array will not be totally ordered.
+
+The precondition therefore to obtain a totally ordered output array is
+to have the input arrays sorted.
+
+This is why merge sort works in steps of merge sorting from single elements
+into bigger and bigger sorted arrays.
+"""
+
 from typing import List
 
 
@@ -14,22 +25,11 @@ def merge_by_criteria(
     j: int = 0
 
     # distribute by comparison
-    while i < A1SIZE and j < A2SIZE:
-        if array1[i] <= array2[j]:
+    while i < A1SIZE or j < A2SIZE:
+        if i < A1SIZE and (j >= A2SIZE or array1[i] <= array2[j]):
             array3.append(array1[i])
             i += 1
         else:
-            array3.append(array2[j])
-            j += 1
-
-    # distribute residue
-    while i < A1SIZE:
-        if i < A1SIZE:
-            array3.append(array1[i])
-            i += 1
-
-    while j < A2SIZE:
-        if j < A2SIZE:
             array3.append(array2[j])
             j += 1
 
