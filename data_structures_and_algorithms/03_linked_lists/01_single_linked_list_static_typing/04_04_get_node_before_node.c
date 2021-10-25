@@ -13,8 +13,8 @@ typedef struct LinkedList {
 } LinkedList;
 
 
-void insertInListAtEnd(LinkedList * list, int newValue) {
-  if (list == NULL) return;
+Node * insertInListAtEnd(LinkedList * list, int newValue) {
+  if (list == NULL) return NULL;
 
   // create new node
   Node * newNode = malloc(sizeof(Node));
@@ -37,17 +37,25 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
     // attach it to the last node
     p->next = newNode;
   }
+
+  return newNode;
 }
 
-Node * getNodeAt(LinkedList * list, unsigned int offset) {
-  if (list == NULL) return NULL;
+Node * getNodeBefore(
+  LinkedList * list,
+  Node * referenceNode
+) {
+  if (
+    list == NULL ||
+    list->head == NULL ||
+    list->head == referenceNode
+  ) return NULL;
 
   Node * p = list->head;
 
-  int i = 0;
-  while (p != NULL && i < offset) {
+  while (p != NULL && p->next != referenceNode) {
+    if (p->next == referenceNode) break;
     p = p->next;
-    ++i;
   }
 
   return p;
@@ -61,6 +69,13 @@ void displayList(LinkedList * list) {
     printf("%p { %d } -> %p \n", p, p->value, p->next);
     p = p->next;
   }
+}
+
+void displayNode(Node * node, char * descr) {
+  printf("%s\n", descr);
+  if (node != NULL) printf("%p { %d }\n", node, node->value);
+  else printf("No node\n");
+  printf("\n");
 }
 
 void clearListMemory(LinkedList * list) {
@@ -79,23 +94,24 @@ int main(int argc, char const *argv[]) {
 
   LinkedList list = {.head=NULL};
 
-  insertInListAtEnd(&list, 111);
+  Node * firstTarget = insertInListAtEnd(&list, 111);
   insertInListAtEnd(&list, 222);
   insertInListAtEnd(&list, 333);
-  insertInListAtEnd(&list, 444);
-  insertInListAtEnd(&list, 555);
+  Node * secondTarget = insertInListAtEnd(&list, 444);
+  Node * lastTarget = insertInListAtEnd(&list, 555);
 
   displayList(&list);
   printf("\n");
 
-  Node * node = getNodeAt(&list, 2);
 
-  if (node != NULL) {
-    printf("%p { %d }\n", node, node->value);
-  }
-  else {
-    printf("No node");
-  }
+  Node * node1 = getNodeBefore(&list, firstTarget);
+  displayNode(node1, "FIRST");
+
+  Node * node2 = getNodeBefore(&list, secondTarget);
+  displayNode(node2, "SECOND");
+
+  Node * node3 = getNodeBefore(&list, lastTarget);
+  displayNode(node3, "LAST");
 
   clearListMemory(&list);
 

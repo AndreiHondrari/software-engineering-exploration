@@ -39,18 +39,49 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
   }
 }
 
-Node * getNodeAt(LinkedList * list, unsigned int offset) {
+Node * getNodeBefore(
+  LinkedList * list,
+  Node * referenceNode
+) {
+  if (
+    list == NULL ||
+    list->head == NULL ||
+    list->head == referenceNode
+  ) return NULL;
+
+  Node * p = list->head;
+
+  while (p != NULL && p->next != referenceNode) {
+    if (p->next == referenceNode) break;
+    p = p->next;
+  }
+
+  return p;
+}
+
+Node * getLastNode(LinkedList * list) {
   if (list == NULL) return NULL;
 
   Node * p = list->head;
 
-  int i = 0;
-  while (p != NULL && i < offset) {
+  while (p != NULL && p->next != NULL) {
     p = p->next;
-    ++i;
   }
 
   return p;
+}
+
+void swapExtremeNodes(LinkedList * list) {
+  if (list == NULL || list->head == NULL || list->head->next == NULL) return;
+
+  Node * first = list->head;
+  Node * last = getLastNode(list);
+  Node * beforeLast = getNodeBefore(list, last);
+
+  last->next = first->next;
+  first->next = NULL;
+  beforeLast->next = first;
+  list->head = last;
 }
 
 void displayList(LinkedList * list) {
@@ -85,17 +116,15 @@ int main(int argc, char const *argv[]) {
   insertInListAtEnd(&list, 444);
   insertInListAtEnd(&list, 555);
 
+  printf("Before\n");
   displayList(&list);
   printf("\n");
 
-  Node * node = getNodeAt(&list, 2);
+  swapExtremeNodes(&list);
 
-  if (node != NULL) {
-    printf("%p { %d }\n", node, node->value);
-  }
-  else {
-    printf("No node");
-  }
+  printf("After\n");
+  displayList(&list);
+  printf("\n");
 
   clearListMemory(&list);
 

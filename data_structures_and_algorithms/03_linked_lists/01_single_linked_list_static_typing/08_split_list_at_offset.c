@@ -12,6 +12,11 @@ typedef struct LinkedList {
   Node * head;
 } LinkedList;
 
+typedef struct SplitLinkedList {
+  LinkedList left;
+  LinkedList right;
+} SplitLinkedList;
+
 
 void insertInListAtEnd(LinkedList * list, int newValue) {
   if (list == NULL) return;
@@ -39,56 +44,59 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
   }
 }
 
-void swapNodes(
+SplitLinkedList splitList(
   LinkedList * list,
-  unsigned char offset_1,
-  unsigned char offset_2
+  unsigned int offset
 ) {
-  if (
-    list == NULL ||
-    list->head == NULL ||
-    list->head->next == NULL ||
-    offset_1 == offset_2
-  ) return;
+  LinkedList leftList = {.head=NULL};
+  LinkedList rightList = {.head=NULL};
+  SplitLinkedList result = {.left=leftList, .right=rightList};
 
-  Node * beforeFirst = NULL;
-  Node * first = NULL;
-
-  Node * beforeSecond = NULL;
-  Node * second = NULL;
+  if (list == NULL || list->head == NULL) return result;
 
   Node * p = list->head;
-  Node * q = NULL;
+  Node * x = NULL;
+  Node * y = NULL;
 
-  int i = 0;
+  int k = 0;
   while (p != NULL) {
 
-    if (i == offset_1) {
-      beforeFirst = q;
-      first = p;
+    // to the left
+    if (k < offset) {
+      if (leftList.head == NULL) {
+        leftList.head = p;
+        x = p;
+      }
+      else {
+        x->next = p;
+        x = p;
+      }
     }
 
-    if (i == offset_2) {
-      beforeSecond = q;
-      second = p;
+    // to the right
+    else {
+      if (rightList.head == NULL) {
+        rightList.head = p;
+        y = p;
+      }
+      else {
+        y->next = p;
+        y = p;
+      }
     }
 
-    q = p;
     p = p->next;
-
-    ++i;
+    ++k;
   }
 
-  if (first != NULL && second != NULL) {
-    if (beforeFirst != NULL) beforeFirst->next = second;
-    if (beforeSecond != NULL) beforeSecond->next = first;
-    Node * temp = first->next;
-    first->next = second->next;
-    second->next = temp;
+  // close-up the lists
+  x->next = NULL;
+  y->next = NULL;
 
-    if (beforeFirst == NULL && offset_1 < offset_2) list->head = second;
-    if (beforeSecond == NULL && offset_1 > offset_2) list->head = first;
-  }
+  // if (p == NULL) return NULL;
+  result.left = leftList;
+  result.right = rightList;
+  return result;
 }
 
 void displayList(LinkedList * list) {
@@ -125,17 +133,25 @@ int main(int argc, char const *argv[]) {
   insertInListAtEnd(&list, 666);
   insertInListAtEnd(&list, 777);
 
-  printf("Before\n");
+  printf("Original\n");
   displayList(&list);
   printf("\n");
 
-  swapNodes(&list, 1, 5);
+  SplitLinkedList resultingLists = splitList(&list, 3);
+  LinkedList leftList = resultingLists.left;
+  LinkedList rightList = resultingLists.right;
 
-  printf("After\n");
-  displayList(&list);
+  printf("Left list\n");
+  displayList(&leftList);
+  printf("\n");
+
+  printf("Right list\n");
+  displayList(&rightList);
   printf("\n");
 
   clearListMemory(&list);
+  clearListMemory(&leftList);
+  clearListMemory(&rightList);
 
   return 0;
 }

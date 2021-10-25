@@ -39,18 +39,30 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
   }
 }
 
-Node * getNodeAt(LinkedList * list, unsigned int offset) {
-  if (list == NULL) return NULL;
+unsigned int getListSize(LinkedList * list) {
+  unsigned int result = 0;
 
   Node * p = list->head;
-
-  int i = 0;
-  while (p != NULL && i < offset) {
+  while (p != NULL) {
+    result += 1;
     p = p->next;
-    ++i;
   }
 
-  return p;
+  return result;
+}
+
+LinkedList cloneList(LinkedList * list) {
+  LinkedList result = {.head=NULL};
+
+  if (list == NULL || list->head == NULL) return result;
+
+  Node * p = list->head;
+  while (p != NULL) {
+    insertInListAtEnd(&result, p->value);
+    p = p->next;
+  }
+
+  return result;
 }
 
 void displayList(LinkedList * list) {
@@ -79,25 +91,25 @@ int main(int argc, char const *argv[]) {
 
   LinkedList list = {.head=NULL};
 
-  insertInListAtEnd(&list, 111);
-  insertInListAtEnd(&list, 222);
-  insertInListAtEnd(&list, 333);
-  insertInListAtEnd(&list, 444);
-  insertInListAtEnd(&list, 555);
+  int values[] = {55, 22, 33, 77};
+  unsigned int SIZE = sizeof(values) / sizeof(int);
 
+  for (int i = 0; i < SIZE; ++i) {
+    insertInListAtEnd(&list, values[i]);
+  }
+
+  printf("Before\n");
   displayList(&list);
   printf("\n");
 
-  Node * node = getNodeAt(&list, 2);
+  LinkedList listCopy = cloneList(&list);
 
-  if (node != NULL) {
-    printf("%p { %d }\n", node, node->value);
-  }
-  else {
-    printf("No node");
-  }
+  printf("After\n");
+  displayList(&listCopy);
+  printf("\n");
 
   clearListMemory(&list);
+  clearListMemory(&listCopy);
 
   return 0;
 }

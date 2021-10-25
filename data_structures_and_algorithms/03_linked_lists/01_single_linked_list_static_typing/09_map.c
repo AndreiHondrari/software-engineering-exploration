@@ -39,26 +39,21 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
   }
 }
 
-Node * getNodeAt(LinkedList * list, unsigned int offset) {
-  if (list == NULL) return NULL;
-
-  Node * p = list->head;
-
-  int i = 0;
-  while (p != NULL && i < offset) {
-    p = p->next;
-    ++i;
-  }
-
-  return p;
-}
-
 void displayList(LinkedList * list) {
   if (list == NULL) return;
 
   Node * p = list->head;
   while (p != NULL) {
     printf("%p { %d } -> %p \n", p, p->value, p->next);
+    p = p->next;
+  }
+}
+
+void mapList(LinkedList * list, int (*transformFunc)()) {
+  if (list == NULL || transformFunc == NULL) return;
+  Node * p = list->head;
+  while (p != NULL) {
+    p->value = transformFunc(p->value);
     p = p->next;
   }
 }
@@ -75,27 +70,30 @@ void clearListMemory(LinkedList * list) {
   list->head = NULL;
 }
 
+int transformValue(int n) {
+  int val = (n * 10 + n);
+  return val * val;
+}
+
 int main(int argc, char const *argv[]) {
 
   LinkedList list = {.head=NULL};
 
-  insertInListAtEnd(&list, 111);
-  insertInListAtEnd(&list, 222);
-  insertInListAtEnd(&list, 333);
-  insertInListAtEnd(&list, 444);
-  insertInListAtEnd(&list, 555);
+  insertInListAtEnd(&list, 1);
+  insertInListAtEnd(&list, 2);
+  insertInListAtEnd(&list, 3);
+  insertInListAtEnd(&list, 4);
+  insertInListAtEnd(&list, 5);
 
+  printf("Before\n");
   displayList(&list);
   printf("\n");
 
-  Node * node = getNodeAt(&list, 2);
+  mapList(&list, &transformValue);
 
-  if (node != NULL) {
-    printf("%p { %d }\n", node, node->value);
-  }
-  else {
-    printf("No node");
-  }
+  printf("After\n");
+  displayList(&list);
+  printf("\n");
 
   clearListMemory(&list);
 

@@ -39,18 +39,27 @@ void insertInListAtEnd(LinkedList * list, int newValue) {
   }
 }
 
-Node * getNodeAt(LinkedList * list, unsigned int offset) {
+Node * getLastNode(LinkedList * list) {
   if (list == NULL) return NULL;
 
   Node * p = list->head;
 
-  int i = 0;
-  while (p != NULL && i < offset) {
+  while (p != NULL && p->next != NULL) {
     p = p->next;
-    ++i;
   }
 
   return p;
+}
+
+LinkedList concatenateLists(LinkedList * listOne, LinkedList * listTwo) {
+  LinkedList result = {.head = NULL};
+
+  Node * listOneLastNode = getLastNode(listOne);
+  listOneLastNode->next = listTwo->head;
+
+  result.head = listOne->head;
+
+  return result;
 }
 
 void displayList(LinkedList * list) {
@@ -77,27 +86,35 @@ void clearListMemory(LinkedList * list) {
 
 int main(int argc, char const *argv[]) {
 
-  LinkedList list = {.head=NULL};
+  LinkedList firstList = {.head=NULL};
+  LinkedList secondList = {.head=NULL};
 
-  insertInListAtEnd(&list, 111);
-  insertInListAtEnd(&list, 222);
-  insertInListAtEnd(&list, 333);
-  insertInListAtEnd(&list, 444);
-  insertInListAtEnd(&list, 555);
+  insertInListAtEnd(&firstList, 111);
+  insertInListAtEnd(&firstList, 222);
+  insertInListAtEnd(&firstList, 333);
 
-  displayList(&list);
+  insertInListAtEnd(&secondList, 444);
+  insertInListAtEnd(&secondList, 555);
+  insertInListAtEnd(&secondList, 666);
+  insertInListAtEnd(&secondList, 777);
+
+  printf("First list\n");
+  displayList(&firstList);
   printf("\n");
 
-  Node * node = getNodeAt(&list, 2);
+  printf("Second list\n");
+  displayList(&secondList);
+  printf("\n");
 
-  if (node != NULL) {
-    printf("%p { %d }\n", node, node->value);
-  }
-  else {
-    printf("No node");
-  }
+  LinkedList result = concatenateLists(&firstList, &secondList);
 
-  clearListMemory(&list);
+  printf("Result\n");
+  displayList(&result);
+  printf("\n");
+
+  clearListMemory(&firstList);
+  clearListMemory(&secondList);
+  clearListMemory(&result);
 
   return 0;
 }
