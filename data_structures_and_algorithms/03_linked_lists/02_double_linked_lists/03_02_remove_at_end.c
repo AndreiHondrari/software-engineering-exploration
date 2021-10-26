@@ -37,7 +37,7 @@ void removeEndNode(LinkedList * list) {
 
   Node * p = list->tail;
   list->tail = list->tail->prev;
-  list->tail->next = NULL;
+  if (list->tail != NULL) list->tail->next = NULL;
   free(p);
 }
 

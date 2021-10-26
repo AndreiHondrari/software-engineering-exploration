@@ -18,14 +18,13 @@ Node * insertNodeAtBeginning(LinkedList * list, int newValue) {
   Node * newNode = malloc(sizeof(Node));
   newNode->value = newValue;
 
+  newNode->prev = NULL;
   if (list->head == NULL) {
     list->head = newNode;
     newNode->next = NULL;
-    newNode->prev = NULL;
     list->tail = newNode;
   }
   else {
-    newNode->prev = NULL;
     newNode->next = list->head;
     list->head = newNode;
     newNode->next->prev = newNode; // backlink
