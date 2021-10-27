@@ -1,6 +1,10 @@
 from typing import cast, Optional
+import matplotlib.pyplot as plt
 
-from bst import BinarySearchTree, Node, node_representation
+from bst import (
+    BinarySearchTree, Node, node_representation,
+    draw_tree,
+)
 
 
 def _insert(node: Node, new_value: int) -> Optional[Node]:
@@ -37,10 +41,17 @@ if __name__ == '__main__':
     bst = BinarySearchTree()
 
     insert(bst, 50)
+    draw_tree(bst.root)
     insert(bst, 25)
+    draw_tree(bst.root)
     insert(bst, 75)
+    draw_tree(bst.root)
     insert(bst, 20)
+    draw_tree(bst.root)
     insert(bst, 30)
+    draw_tree(bst.root)
     insert(bst, 100)
+    draw_tree(bst.root)
+    plt.show()
 
     print(node_representation(cast(Node, bst.root)))

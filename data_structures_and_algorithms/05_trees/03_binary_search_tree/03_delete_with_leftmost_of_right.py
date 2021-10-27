@@ -1,6 +1,10 @@
 from typing import cast, Optional
+import matplotlib.pyplot as plt
 
-from bst import BinarySearchTree, Node, node_representation
+from bst import (
+    BinarySearchTree, Node, node_representation,
+    draw_tree,
+)
 
 
 def _insert(node: Node, new_value: int) -> Optional[Node]:
@@ -58,15 +62,22 @@ def remove_from_tree(target: Node) -> None:
         cast(Node, replacement).right = target.right
 
     # handle parenting
+    if replacement is not None:
+        replacement.parent = parent
+
     if parent is not None:
-        if replacement is not None:
-            replacement.parent = parent
 
         if parent.left is target:
             parent.left = replacement
 
         if parent.right is target:
             parent.right = replacement
+
+    if left_exists and target.left is not replacement:
+        cast(Node, target.left).parent = replacement
+
+    if right_exists and target.right is not replacement:
+        cast(Node, target.right).parent = replacement
 
 
 if __name__ == '__main__':
@@ -86,9 +97,13 @@ if __name__ == '__main__':
 
     print("BEFORE")
     print(node_representation(cast(Node, bst.root)))
+    draw_tree(bst.root)
 
     print(f"Remove {target_node} \n")
     remove_from_tree(cast(Node, target_node))
 
     print("AFTER")
     print(node_representation(cast(Node, bst.root)))
+    draw_tree(bst.root)
+
+    plt.show()

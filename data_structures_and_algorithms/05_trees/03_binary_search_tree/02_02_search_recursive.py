@@ -1,6 +1,10 @@
 from typing import cast, Optional
+import matplotlib.pyplot as plt
 
-from bst import BinarySearchTree, Node, node_representation
+from bst import (
+    BinarySearchTree, Node, node_representation,
+    draw_tree,
+)
 
 
 def _insert(node: Node, new_value: int) -> Optional[Node]:
