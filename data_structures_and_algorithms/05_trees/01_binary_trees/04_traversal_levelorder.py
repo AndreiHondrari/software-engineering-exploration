@@ -2,7 +2,7 @@ from typing import Callable, Deque
 
 from collections import deque
 
-from binary_tree import Node, node_representation
+from tree_structure import Node, node_representation
 
 
 def traverse_levelorder(

@@ -1,6 +1,6 @@
 from typing import Callable
 
-from binary_tree import Node, node_representation
+from tree_structure import Node, node_representation
 
 
 def traverse_inorder(
