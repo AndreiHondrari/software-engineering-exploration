@@ -81,11 +81,11 @@ if __name__ == '__main__':
     bst = BinarySearchTree()
 
     insert(bst, 50)
-    insert(bst, 25)
+    target_node = insert(bst, 25)
     insert(bst, 75)
     insert(bst, 20)
     insert(bst, 19)
-    target_node = insert(bst, 23)
+    insert(bst, 23)
     insert(bst, 22)
     insert(bst, 30)
     insert(bst, 29)
