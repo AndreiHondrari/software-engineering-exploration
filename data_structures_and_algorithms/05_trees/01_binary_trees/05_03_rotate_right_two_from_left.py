@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from tree_structure import (
     Node,
-    add_left_child, add_right_child,
+    add_left_child,
     node_representation, draw_tree
 )
 from binary_tree_functions import rotate_right
