@@ -2,47 +2,64 @@
 The point here is that one thread waits for the other and viceverse,
 waiting for ever, effectively being in a state of deadlock.
 """
+import time
 import threading
 
+reached_end: bool = False
+lock_a: bool = False
+lock_b: bool = False
 
-def do_this(
-    condition_a: threading.Condition,
-    condition_b: threading.Condition,
-    reached_event: threading.Event,
-) -> None:
+
+def do_this() -> None:
+    global lock_a
+    global lock_b
+    global reached_end
+
     this_thread = threading.current_thread()
     tname = this_thread.name
     print(f"[{tname}] START", flush=True)
 
+    print(f"[{tname}] lock B", flush=True)
+    lock_b = True
+
+    print(f"[{tname}] simulate slow wait after lock", flush=True)
+    time.sleep(1)
+
     print(f"[{tname}] wait for A", flush=True)
-    with condition_a:
-        condition_a.wait()
-    print(f"[{tname}] A passed", flush=True)
+    while lock_a:
+        time.sleep(0.1)
 
-    condition_b.notify()
+    print(f"[{tname}] release lock B", flush=True)
+    lock_b = False
 
-    reached_event.set()
+    reached_end = True
 
     print(f"[{tname}] STOP", flush=True)
 
 
-def do_that(
-    condition_a: threading.Condition,
-    condition_b: threading.Condition,
-    reached_event: threading.Event,
-) -> None:
+def do_that() -> None:
+    global lock_a
+    global lock_b
+    global reached_end
+
     this_thread = threading.current_thread()
     tname = this_thread.name
     print(f"[{tname}] START", flush=True)
 
+    print(f"[{tname}] lock A", flush=True)
+    lock_a = True
+
+    print(f"[{tname}] simulate slow wait after lock", flush=True)
+    time.sleep(1)
+
     print(f"[{tname}] wait for B", flush=True)
-    with condition_b:
-        condition_b.wait()
-    print(f"[{tname}] B passed", flush=True)
+    while lock_b:
+        time.sleep(0.1)
 
-    condition_a.notify()
+    print(f"[{tname}] release A", flush=True)
+    lock_a = False
 
-    reached_event.set()
+    reached_end = True
 
     print(f"[{tname}] STOP", flush=True)
 
@@ -50,23 +67,16 @@ def do_that(
 def main() -> None:
     print("[MAIN] START", flush=True)
 
-    condition_a = threading.Condition()
-    condition_b = threading.Condition()
-
-    reached_event = threading.Event()
-
     print("[MAIN] create threads", flush=True)
     thread_x = threading.Thread(
         target=do_this,
         name="THIS_THREAD",
-        args=(condition_a, condition_b, reached_event,)
     )
     thread_x.daemon = True
 
     thread_y = threading.Thread(
         target=do_that,
         name="THAT_THREAD",
-        args=(condition_a, condition_b, reached_event,)
     )
     thread_y.daemon = True
 
@@ -75,10 +85,10 @@ def main() -> None:
     thread_y.start()
 
     print("[MAIN] wait for threads", flush=True)
-    thread_x.join(timeout=1)
-    thread_y.join(timeout=1)
+    thread_x.join(timeout=2)
+    thread_y.join(timeout=2)
 
-    if reached_event.is_set():
+    if reached_end:
         print("[MAIN] one of the threads made it \\:D/ !", flush=True)
     else:
         print("[MAIN] NONE of the threads made it :( !", flush=True)
