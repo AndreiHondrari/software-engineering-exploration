@@ -9,10 +9,8 @@ of incoming requests.
 import time
 import threading
 import functools
-import multiprocessing
 
 from typing import Callable, Any, List
-from multiprocessing.connection import Connection
 
 
 def tprint(msg: str) -> None:
@@ -35,70 +33,59 @@ def mark_thread_ends(
 
 
 def do_something(
-    stop_event: threading.Event,
+    target: int,
     lock: threading.Lock,
-    result_connection: Connection
 ) -> None:
 
-    count = 0
-    while not stop_event.is_set():
+    for i in range(target):
         lock.acquire()
-        count += 1
         lock.release()
-
-    result_connection.send(count)
 
 
 def launch_for(
     number_of_threads: int,
-    duration: int,
+    target: int,
     name: str
 ) -> None:
-    print("", flush=True)
-    tprint(f"Launch {name} | {number_of_threads} threads | {duration}s")
-    stop_event = threading.Event()
+    print(flush=True)
+    tprint(f"Launch {name} | {number_of_threads} threads | {target} ops")
     hot_lock = threading.Lock()
-
-    result_connections: List[Connection] = []
 
     tprint(f"[{name}] create threads")
     threads: List[threading.Thread] = []
 
     for i in range(24):
-        receiver_connection, sender_connection = multiprocessing.Pipe()
-        result_connections.append(receiver_connection)
-
         new_thread = threading.Thread(
             target=do_something,
-            args=(stop_event, hot_lock, sender_connection,)
+            args=(target, hot_lock,)
         )
         new_thread.daemon = True
         threads.append(new_thread)
 
     tprint(f"[{name}] start threads")
+    start = time.time()
     for t in threads:
         t.start()
-
-    tprint(f"[{name}] wait for the threads")
-    time.sleep(duration)
-
-    tprint(f"[{name}] kill threads")
-    stop_event.set()
 
     tprint(f"[{name}] wait for threads to DIE ...")
     for t in threads:
         t.join()
 
-    final_count = 0
-    for res_con in result_connections:
-        final_count += res_con.recv()
-    tprint(f"[{name}] final count: {final_count}")
+    stop = time.time()
+    elapsed_time = stop - start
+    tprint(f"[{name}] elapsed time: {elapsed_time:.4f}s")
 
 
+@mark_thread_ends
 def main() -> None:
-    launch_for(4, 5, "ALFA")
-    launch_for(24, 5, "BRAVO")
-    launch_for(128, 5, "CHARLIE")
+    try:
+        TARGET = 10_000
+        launch_for(4, TARGET, "ALFA")
+        launch_for(24, TARGET, "BRAVO")
+        launch_for(128, TARGET, "CHARLIE")
+    except KeyboardInterrupt:
+        print(flush=True)
+        tprint("Stop detected")
 
 
 if __name__ == '__main__':
