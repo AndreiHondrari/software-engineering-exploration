@@ -1,24 +1,30 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+
+typedef struct Args {
+  unsigned long limit
+} Args;
 
 pthread_mutex_t hotLock = PTHREAD_MUTEX_INITIALIZER;
 
 static volatile int k = 0;
 
-void * doWithLock(void * arg) {
-  unsigned int limit = (unsigned int) arg;
-  for (int i = 0; i < limit; i++) {
+void * doWithLock(void * argsPtr) {
+  Args args  = *((Args *) argsPtr);
+  for (int i = 0; i < args.limit; i++) {
     pthread_mutex_lock(&hotLock);
     k = i;
     pthread_mutex_unlock(&hotLock);
   }
 }
 
-void * doLockFree(void * arg) {
-    unsigned int limit = (unsigned int) arg;
+void * doLockFree(void * argsPtr) {
+    Args args  = *((Args *) argsPtr);
+
     unsigned int local_k = 0;
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < args.limit; i++) {
       k += 1;
     }
 }
@@ -38,6 +44,8 @@ void launchFor(
   time(&start);
 
   // CREATE
+  Args * args = malloc(sizeof(Args));
+  args->limit = target;
   printf("[%s] create threads\n", name);
   for (int i = 0; i < numberOfThreads; ++i) {
     pthread_t newThreadIdent;
@@ -45,7 +53,7 @@ void launchFor(
       &newThreadIdent, // thread ident
       NULL, // thread execution attributes
       func, // routine
-      (void *) target  // parameter
+      (void *) args  // parameter
     );
     threadsArray[i] = newThreadIdent;
   }
@@ -59,6 +67,9 @@ void launchFor(
   time(&stop);
   elapsedTime = difftime(stop, start);
   printf("[%s] elapsed time %f\n", name, elapsedTime);
+
+  // clean
+  free(args);
 }
 
 int main(int argc, char const *argv[]) {
