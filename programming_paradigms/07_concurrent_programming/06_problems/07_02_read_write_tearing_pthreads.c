@@ -1,12 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
-#include <unistd.h>
 
 
-long double k = 0;
+long k = 0;
 
 // 0x FFFF FFFF FFFF FFFF
-// 0x FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF
 
 void * doWrite(void * arg) {
   printf("[WRITER] START\n");
@@ -14,7 +13,7 @@ void * doWrite(void * arg) {
   unsigned char flip = 0;
   while (1) {
     if (flip) {
-      k = 0xaaaabbbbccddeeffaaaabbbbccddeeff;
+      k = 0x0aaabbbbccddeeff;
     } else {
       k = 0;
     }
@@ -28,15 +27,13 @@ void * doWrite(void * arg) {
 void * doRead(void * arg) {
   printf("[READER] START\n");
 
-  unsigned char res = 0;
-  long double local_k = k;
-
   while (1) {
-    local_k = k;
-
-    if (!(local_k == 0.0 || local_k == 0xaaaabbbbccddeeffaaaabbbbccddeeff)) {
-      printf("[READER] FAULT DETECTED %.2Lf \n", local_k);
+    if (!(k == 0 || k == 0x0aaabbbbccddeeff)) {
+      // no need to print k. By the time print gets to the value
+      // it has already been corrected
+      printf("[READER] FAULT DETECTED\n");
       fflush(stdin);
+      exit(1);
     }
   }
 
