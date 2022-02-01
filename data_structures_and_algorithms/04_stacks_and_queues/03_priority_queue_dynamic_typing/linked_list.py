@@ -2,9 +2,14 @@ from dataclasses import dataclass
 from typing import Optional, List, Any
 
 
+class NotLinkedListChild(Exception):
+    pass
+
+
 @dataclass
 class Node:
     value: Any
+    parent: 'LinkedList'
     prev: Optional['Node'] = None
     next: Optional['Node'] = None
 
@@ -24,7 +29,7 @@ class LinkedList:
         return " -> ".join(values)
 
     def insert_at_end(self, new_value: Any) -> Node:
-        new_node = Node(value=new_value)
+        new_node = Node(value=new_value, parent=self)
 
         if (self.tail is None):
             self.head = new_node
@@ -40,22 +45,18 @@ class LinkedList:
         return new_node
 
     def remove(self, node: Node) -> None:
-        p: Optional[Node] = self.head
-        while p is not None:
-            if p is node:
-                break
-            p = p.next
+        if node.parent != self:
+            raise NotLinkedListChild
 
-        if p is not None:
-            prev: Optional[Node] = p.prev
-            next: Optional[Node] = p.next
+        prev: Optional[Node] = node.prev
+        next: Optional[Node] = node.next
 
-            if prev is None:
-                self.head = next
-            else:
-                prev.next = next
+        if prev is None:
+            self.head = next
+        else:
+            prev.next = next
 
-            if next is None:
-                self.tail = prev
-            else:
-                next.prev = prev
+        if next is None:
+            self.tail = prev
+        else:
+            next.prev = prev
