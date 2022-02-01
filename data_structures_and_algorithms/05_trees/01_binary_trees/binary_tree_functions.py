@@ -22,3 +22,23 @@ def rotate_right(root: Node) -> Node:
     root.parent = right_most
 
     return new_root
+
+
+def rotate_left(root: Node) -> Node:
+    new_root = root.right
+
+    if new_root is None:
+        return root
+
+    root.right = None
+    new_root.parent = None
+
+    left_most = new_root
+
+    while left_most.left is not None:
+        left_most = left_most.left
+
+    left_most.left = root
+    root.parent = left_most
+
+    return new_root
