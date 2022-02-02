@@ -26,7 +26,7 @@ def build_tree() -> Node:
 
 
 def main() -> None:
-    hprint("Left rotation")
+    hprint("Right rotation")
     root = build_tree()
 
     hprint("Before")
