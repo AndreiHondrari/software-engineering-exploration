@@ -69,8 +69,16 @@ def rotate_right(root: Node) -> Node:
 
 
 def rotate_left_right(root: Node) -> Node:
-    pass
+    if root.left is None:
+        return root
+
+    root.left = rotate_left(root.left)
+    return rotate_right(root)
 
 
 def rotate_right_left(root: Node) -> Node:
-    pass
+    if root.right is None:
+        return root
+
+    root.right = rotate_right(root.right)
+    return rotate_left(root)
