@@ -1,16 +1,14 @@
 import random
+import functools
+
 import dataclasses as dc
-from typing import Optional, Any
+from typing import Optional, Any, cast, Tuple
+
+import tree_structure
 
 
 @dc.dataclass
-class Node:
-    value: Any
-    parent: Optional['Node'] = dc.field(default=None, repr=False)
-
-    left: Optional['Node'] = dc.field(default=None, repr=False)
-    right: Optional['Node'] = dc.field(default=None, repr=False)
-
+class Node(tree_structure.Node):
     left_height: int = 0
     right_height: int = 0
 
@@ -18,12 +16,10 @@ class Node:
     def balance_factor(self) -> int:
         return self.left_height - self.right_height
 
-    # for display purposes
-    control_id: int = dc.field(
-        init=False,
-        repr=False,
-        default_factory=lambda: random.randint(0, 10_000_000)
-    )
+
+
+add_left_child = functools.partial(tree_structure.add_left_child, klass=Node)
+add_right_child = functools.partial(tree_structure.add_right_child, klass=Node)
 
 
 def rotate_left(root: Node) -> Node:

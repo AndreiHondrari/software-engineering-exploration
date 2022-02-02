@@ -3,12 +3,13 @@ import functools
 import matplotlib.pyplot as plt
 
 from tree_structure import (
-    add_left_child, add_right_child,
     node_representation, draw_tree,
 )
 
 from avl import (
     Node,
+    add_left_child as alc,
+    add_right_child as arc,
     rotate_left, rotate_right,
     rotate_left_right, rotate_right_left,
 )
@@ -19,8 +20,8 @@ hprint = functools.partial(print, "\n#")
 
 def build_tree() -> Node:
     root = Node(value="A")
-    n1 = add_right_child(root, "B")
-    add_right_child(n1, "C")
+    n1 = arc(root, "B")
+    arc(n1, "C")
     return root
 
 

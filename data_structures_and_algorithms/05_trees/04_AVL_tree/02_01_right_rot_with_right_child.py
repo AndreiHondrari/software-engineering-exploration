@@ -3,13 +3,13 @@ import functools
 import matplotlib.pyplot as plt
 
 from tree_structure import (
-    add_left_child as alc,
-    add_right_child as arc,
     node_representation, draw_tree,
 )
 
 from avl import (
     Node,
+    add_left_child as alc,
+    add_right_child as arc,
     rotate_left, rotate_right,
     rotate_left_right, rotate_right_left,
 )

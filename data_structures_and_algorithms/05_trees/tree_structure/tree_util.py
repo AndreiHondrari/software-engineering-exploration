@@ -1,11 +1,13 @@
 import enum
-from typing import Optional, Dict, Tuple, List, DefaultDict
+from typing import Optional, Dict, Tuple, List, DefaultDict, Type, TypeVar, Any
 from collections import defaultdict
 
 import networkx as nx
 import matplotlib.pyplot as plt
 
 from .node import Node
+
+T = TypeVar('T')
 
 
 @enum.unique
@@ -15,16 +17,24 @@ class NodeSide(enum.IntEnum):
     RIGHT = enum.auto()
 
 
-def add_left_child(node: Node, value: int) -> Node:
+def add_left_child(
+    node: T,
+    value: Any,
+    klass: Type[T] = Node
+) -> T:
     assert node.left is None
-    new_node = Node(value=value, parent=node)
+    new_node = klass(value=value, parent=node)
     node.left = new_node
     return new_node
 
 
-def add_right_child(node: Node, value: int) -> Node:
+def add_right_child(
+    node: T,
+    value: Any,
+    klass: Type[T] = Node
+) -> T:
     assert node.right is None
-    new_node = Node(value=value, parent=node)
+    new_node = klass(value=value, parent=node)
     node.right = new_node
     return new_node
 

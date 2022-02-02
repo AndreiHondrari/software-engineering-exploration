@@ -3,23 +3,23 @@ import functools
 import matplotlib.pyplot as plt
 
 from tree_structure import (
-    add_left_child, add_right_child,
     node_representation, draw_tree,
 )
 
 from avl import (
     Node,
+    add_left_child as alc,
+    add_right_child as arc,
     rotate_left, rotate_right,
     rotate_left_right, rotate_right_left,
 )
-
 
 hprint = functools.partial(print, "\n#")
 
 
 def build_tree() -> Node:
     root = Node(value="A")
-    add_left_child(root, "B")
+    alc(root, "B")
     return root
 
 
