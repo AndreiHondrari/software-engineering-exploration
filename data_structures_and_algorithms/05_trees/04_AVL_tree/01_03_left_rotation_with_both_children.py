@@ -17,11 +17,17 @@ from avl import (
 hprint = functools.partial(print, "\n#")
 
 
-def main() -> None:
-    hprint("Left rotation")
+def build_tree() -> Node:
     root = Node(value="A")
     add_left_child(root, "B")
     add_right_child(root, "C")
+    return root
+
+
+def main() -> None:
+    hprint("Left rotation")
+
+    root = build_tree()
 
     hprint("Before")
     print(node_representation(root))
