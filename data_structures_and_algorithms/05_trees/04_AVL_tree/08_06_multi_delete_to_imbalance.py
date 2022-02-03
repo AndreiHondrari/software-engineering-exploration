@@ -1,6 +1,6 @@
 import functools
 
-from typing import Optional
+from typing import Optional, cast
 
 import matplotlib.pyplot as plt
 
@@ -13,7 +13,7 @@ from avl import (
     add_left_child as alc,
     add_right_child as arc,
     validate_tree,
-    insert,
+    insert, remove, delete
 )
 
 
@@ -21,9 +21,12 @@ hprint = functools.partial(print, "\n#")
 
 
 def main() -> None:
-    hprint("Insertion")
+    hprint("Deletion")
 
-    values_to_insert = [30, 20, 10]
+    values_to_insert = [
+        100, 50, 200, 25, 75, 150, 250, 300, 20, 30, 70, 80, 79
+    ]
+    targets = [25, 30, 150, 250, 200]
 
     hprint("Insert values")
     root: Optional[Node] = None
@@ -31,13 +34,20 @@ def main() -> None:
         print(f"Inserting {x} ...")
         root, new_node = insert(root, x)
 
-        errors = validate_tree(None, root)
+    hprint("Before")
+    print(node_representation(root))
+    draw_tree(root)
 
-        if len(errors) == 0:
+    hprint("Delete")
+    for target in targets:
+        print(f"Delete {target}")
+        root = delete(cast(Node, root), target)
+
+        if root is not None:
             print(node_representation(root))
             draw_tree(root)
         else:
-            print("ERRORS:", errors)
+            print("Nothing left")
 
     plt.show()
 

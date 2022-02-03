@@ -30,14 +30,14 @@ def main() -> None:
     root: Optional[Node] = None
     for x in values_to_insert:
         print(f"Inserting {x} ...")
-        root = insert(root, x)
+        root, new_node = insert(root, x)
 
     hprint("Before")
     print(node_representation(root))
     draw_tree(root)
 
     hprint("Imbalance tree")
-    root = insert(root, DESTABILIZING_VALUE)
+    root, new_node = insert(root, DESTABILIZING_VALUE)
 
     hprint("After")
     print(node_representation(root))

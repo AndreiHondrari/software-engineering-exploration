@@ -29,7 +29,7 @@ def main() -> None:
     root: Optional[Node] = None
     for x in values_to_insert:
         print(f"Inserting {x} ...")
-        root = insert(root, x)
+        root, new_node = insert(root, x)
 
         errors = validate_tree(None, root)
 

@@ -1,6 +1,4 @@
-import random
 import functools
-import enum
 
 import dataclasses as dc
 
@@ -150,31 +148,37 @@ def balance(node: Node) -> Node:
     return new_subroot
 
 
-def _insert(node: Node, value: Any) -> Tuple[bool, Node]:
+def _insert(node: Node, value: Any) -> Tuple[bool, Node, Optional[Node]]:
+    """
+    :return: insertion status, subroot, new node
+    """
     if value == node.value:
-        return False, node
+        return False, node, None
 
     inserted = False
+    new_node: Optional[Node] = None
 
     # handle smaller value
     if value < node.value:
         if node.left is None:
-            node.left = Node(parent=node, value=value)
+            new_node = Node(parent=node, value=value)
+            node.left = new_node
             node.left_height = 1
             inserted = True
         else:
-            inserted, new_node = _insert(node.left, value)
-            node.left_height = new_node.height
+            inserted, new_left, new_node = _insert(node.left, value)
+            node.left_height = new_left.height
 
     # handle bigger value
     if value > node.value:
         if node.right is None:
-            node.right = Node(parent=node, value=value)
+            new_node = Node(parent=node, value=value)
+            node.right = new_node
             node.right_height = 1
             inserted = True
         else:
-            inserted, new_node = _insert(node.right, value)
-            node.right_height = new_node.height
+            inserted, new_right, new_node = _insert(node.right, value)
+            node.right_height = new_right.height
 
     # determine balance status
     if inserted:
@@ -191,16 +195,210 @@ def _insert(node: Node, value: Any) -> Tuple[bool, Node]:
             else:
                 old_parent.right = new_subroot
 
-        return True, new_subroot
+        return True, new_subroot, new_node
 
-    return False, node
+    return False, node, None
 
 
-def insert(root: Optional[Node], value: Any) -> Node:
+def insert(root: Optional[Node], value: Any) -> Tuple[Node, Node]:
     # just create the root if it doesn't exist
     if root is None:
-        return Node(value=value)
+        new_node = Node(value=value)
+        return new_node, new_node
 
-    _, root = _insert(root, value)
+    _, root, new_node = _insert(root, value)
 
-    return root
+    return root, new_node
+
+
+def get_leftmost(node: Node) -> Node:
+    if node.left is None:
+        return node
+
+    return get_leftmost(node.left)
+
+
+def get_rightmost(node: Node) -> Node:
+    if node.right is None:
+        return node
+
+    return get_rightmost(node.right)
+
+
+def remove(node: Node) -> Tuple[Optional[Node], Node]:
+    successor: Optional[Node] = None
+
+    left = node.left
+    right = node.right
+    balance_factor = node.balance_factor
+
+    deleted_node = node
+    deleted_node.left = None
+    deleted_node.left_height = 0
+    deleted_node.right = None
+    deleted_node.right_height = 0
+    deleted_node.parent = None
+
+    # handle remove with both children
+    if right is not None and left is not None:
+
+        # from left
+        if balance_factor >= 0:
+            successor = cast(Node, left)
+
+            # obtain rightmost of left
+            rightmost = get_rightmost(left)
+            new_left = None
+
+            if rightmost is not left:
+                rightmost_parent = rightmost.parent
+
+                # remove the rightmost from its location
+                new_rightmost, new_left = remove(rightmost)
+
+                # rewire rightmost parent
+                rightmost_parent.right = new_rightmost
+                if new_rightmost is not None:
+                    new_rightmost.parent = rightmost_parent
+
+                # rewire removed rightmost
+                new_left.parent = successor
+                new_left.left = successor.left
+                if new_left.left is not None:
+                    new_left.left.parent = new_left
+
+                new_left.right = successor.right
+                if new_left.right is not None:
+                    new_left.right.parent = new_left
+
+                # update heights
+                if new_left.left is None:
+                    new_left.left_height = 0
+                else:
+                    new_left.left_height = new_left.left.height
+
+                if new_left.right is None:
+                    new_left.right_height = 0
+                else:
+                    new_left.right_height = new_left.right.height
+
+            # rewire successor
+            if new_left is not None:
+                successor.left = new_left
+                new_left.parent = successor
+
+            successor.right = right
+            right.parent = successor
+
+        # from right
+        else:
+            successor = cast(Node, right)
+
+            # obtain leftmost of right
+            leftmost = get_leftmost(right)
+            new_right = None
+
+            if leftmost is not right:
+                leftmost_parent = leftmost.parent
+
+                # remove the leftmost from its location
+                new_leftmost, new_right = remove(leftmost)
+
+                # rewire leftmost parent
+                leftmost_parent.left = new_leftmost
+                if new_leftmost is not None:
+                    new_leftmost.parent = leftmost_parent
+
+                # rewire removed leftmost
+                new_right.parent = successor
+                new_right.left = successor.left
+                if new_right.left is not None:
+                    new_right.left.parent = new_right
+
+                new_right.right = successor.right
+                if new_right.right is not None:
+                    new_right.right.parent = new_right
+
+                # update heights
+                if new_right.left is None:
+                    new_right.left_height = 0
+                else:
+                    new_right.left_height = new_right.left.height
+
+                if new_right.right is None:
+                    new_right.right_height = 0
+                else:
+                    new_right.right_height = new_right.right.height
+
+            # rewire successor
+            successor.left = left
+            left.parent = successor
+
+            if new_right is not None:
+                successor.right = new_right
+                new_right.parent = successor
+
+    # handle remove with single child
+    else:
+        if left is not None:
+            successor = left
+
+        if right is not None:
+            successor = right
+
+    # reset successor parent
+    if successor is not None:
+        successor.parent = None
+
+        sleft = successor.left
+        successor.left_height = 0 if sleft is None else sleft.height
+
+        sright = successor.right
+        successor.right_height = 0 if sright is None else sright.height
+
+    return successor, deleted_node
+
+
+def delete(node: Node, value: Any) -> Optional[Node]:
+    successor: Optional[Node] = node
+
+    # handle match
+    if node.value == value:
+        parent = node.parent
+        is_left: Optional[bool] = (
+            None if parent is None else parent.left is node
+        )
+        successor, removed_node = remove(node)
+
+        if successor is not None:
+            successor.parent = parent
+
+        successor_height = 0 if successor is None else successor.height
+
+        if parent is not None:
+            if is_left:
+                parent.left = successor
+                parent.left_height = successor_height
+            else:
+                parent.right = successor
+                parent.right_height = successor_height
+
+    # handle lesser
+    elif value < node.value:
+        if node.left is not None:
+            node.left = delete(node.left, value)
+            if node.left is not None:
+                node.left_height = node.left.height
+
+    # handle greater
+    elif value > node.value:
+        if node.right is not None:
+            node.right = delete(node.right, value)
+            if node.right is not None:
+                node.right_height = node.right.height
+
+    # re-balance
+    if successor is not None:
+        successor = balance(successor)
+
+    return successor
