@@ -1,5 +1,8 @@
 import enum
-from typing import Optional, Dict, Tuple, List, DefaultDict, Type, TypeVar, Any
+import dataclasses as dc
+from typing import (
+    Optional, Dict, Tuple, List, DefaultDict, Type, TypeVar, Any, Callable
+)
 from collections import defaultdict
 
 import networkx as nx
@@ -15,6 +18,39 @@ class NodeSide(enum.IntEnum):
     ROOT = enum.auto()
     LEFT = enum.auto()
     RIGHT = enum.auto()
+
+
+@dc.dataclass(frozen=True)
+class TreeError:
+    node: 'Node'
+    parent: Optional['Node'] = None
+    description: Optional[str] = None
+
+
+def validate_tree(
+    parent_node: Optional[Node],
+    node: Node
+) -> List[TreeError]:
+    errors = []
+
+    # current node validation
+    if node.parent != parent_node:
+        errors.append(
+            TreeError(
+                parent=parent_node,
+                node=node,
+                description=f"Actual parent is {node.parent}"
+            )
+        )
+
+    # subtree validation
+    if node.left is not None:
+        errors += validate_tree(node, node.left)
+
+    if node.right is not None:
+        errors += validate_tree(node, node.right)
+
+    return errors
 
 
 def add_left_child(

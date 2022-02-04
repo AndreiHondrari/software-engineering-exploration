@@ -5,14 +5,13 @@ from typing import Optional
 import matplotlib.pyplot as plt
 
 from tree_structure import (
-    node_representation, draw_tree,
+    node_representation, draw_tree, validate_tree,
 )
 
 from avl import (
     Node,
     add_left_child as alc,
     add_right_child as arc,
-    validate_tree,
     insert,
 )
 

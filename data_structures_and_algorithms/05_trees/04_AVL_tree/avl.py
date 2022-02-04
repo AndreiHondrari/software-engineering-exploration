@@ -2,15 +2,9 @@ import functools
 
 import dataclasses as dc
 
-from typing import Optional, Any, cast, Tuple, List
+from typing import Optional, Any, cast, Tuple
 
 import tree_structure
-
-
-@dc.dataclass(frozen=True)
-class TreeError:
-    node: 'Node'
-    parent: Optional['Node'] = None
 
 
 @dc.dataclass
@@ -29,31 +23,6 @@ class Node(tree_structure.Node):
 
 add_left_child = functools.partial(tree_structure.add_left_child, klass=Node)
 add_right_child = functools.partial(tree_structure.add_right_child, klass=Node)
-
-
-def validate_tree(
-    parent_node: Optional[Node],
-    node: Node
-) -> List[TreeError]:
-    errors = []
-
-    # current node validation
-    if node.parent != parent_node:
-        errors.append(
-            TreeError(
-                parent=parent_node,
-                node=node,
-            )
-        )
-
-    # subtree validation
-    if node.left is not None:
-        errors += validate_tree(node, node.left)
-
-    if node.right is not None:
-        errors += validate_tree(node, node.right)
-
-    return errors
 
 
 def rotate_left(root: Node) -> Node:
