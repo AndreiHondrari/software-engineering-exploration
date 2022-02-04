@@ -56,10 +56,11 @@ def validate_tree(
 def add_left_child(
     node: T,
     value: Any,
-    klass: Type[T] = Node
+    klass: Type[T] = Node,
+    **kwargs
 ) -> T:
     assert node.left is None
-    new_node = klass(value=value, parent=node)
+    new_node = klass(value=value, parent=node, **kwargs)
     node.left = new_node
     return new_node
 
@@ -67,10 +68,11 @@ def add_left_child(
 def add_right_child(
     node: T,
     value: Any,
-    klass: Type[T] = Node
+    klass: Type[T] = Node,
+    **kwargs
 ) -> T:
     assert node.right is None
-    new_node = klass(value=value, parent=node)
+    new_node = klass(value=value, parent=node, **kwargs)
     node.right = new_node
     return new_node
 
@@ -80,6 +82,8 @@ def node_representation(
     prepend: str = "",
     orientation: str = ""
 ) -> str:
+    assert node is not None
+
     node_repr: str = (
         f"{prepend}{orientation} [{node.value}]: {node.control_id}\n"
     )
@@ -101,7 +105,8 @@ def _construct_nx_tree(
     g: nx.Graph,
     node: Optional[Node],
     side: NodeSide = NodeSide.ROOT,
-    level: int = 0
+    level: int = 0,
+    data_retrieve_func: Callable[[Node], Any] = lambda x: x.value
 ) -> None:
     if node is None:
         return
@@ -112,7 +117,7 @@ def _construct_nx_tree(
 
     nx.set_node_attributes(g, {
         node.control_id: {
-            'data': node.value,
+            'data': data_retrieve_func(node),
             'side': side,
             'level': level,
             'parent': (
@@ -121,8 +126,14 @@ def _construct_nx_tree(
         }
     })
 
-    _construct_nx_tree(g, node.left, NodeSide.LEFT, level + 1)
-    _construct_nx_tree(g, node.right, NodeSide.RIGHT, level + 1)
+    _construct_nx_tree(
+        g, node.left, NodeSide.LEFT, level + 1,
+        data_retrieve_func=data_retrieve_func
+    )
+    _construct_nx_tree(
+        g, node.right, NodeSide.RIGHT, level + 1,
+        data_retrieve_func=data_retrieve_func
+    )
 
 
 def _max_level_for_node(
@@ -184,9 +195,19 @@ def _compute_positions(
     return positions
 
 
-def draw_tree(root: Node, fig_scale: int = 1) -> None:
+def draw_tree(
+    root: Node,
+    fig_scale: float = 1,
+    font_size_factor: int = 10,
+    node_size_factor: int = 600,
+    x_size_offset: float = 0,
+    y_size_offset: float = 0,
+    x_margin: Optional[float] = None,
+    y_margin: Optional[float] = None,
+    data_retrieve_func: Callable[[Node], Any] = lambda x: x.value
+) -> None:
     g = nx.DiGraph()
-    _construct_nx_tree(g, root)
+    _construct_nx_tree(g, root, data_retrieve_func=data_retrieve_func)
 
     max_level: int = _max_level_for_node(root)
     positions = _compute_positions(g, root, max_level)
@@ -196,8 +217,8 @@ def draw_tree(root: Node, fig_scale: int = 1) -> None:
     INCH_FACTOR = 3 * fig_scale
     fig = plt.figure(frameon=False)
     fig.set_size_inches(
-        INCH_FACTOR * (total_node_count / (max_level + 1)),
-        INCH_FACTOR
+        INCH_FACTOR * (total_node_count / (max_level + 1)) + x_size_offset,
+        INCH_FACTOR + y_size_offset
     )
 
     labels = nx.get_node_attributes(g, 'data')
@@ -220,9 +241,14 @@ def draw_tree(root: Node, fig_scale: int = 1) -> None:
         g,
         with_labels=True,
         labels=labels,
-        node_size=600 * fig_scale,
+        node_size=node_size_factor * fig_scale,
         node_color=color_map,
         font_weight='bold',
-        font_size=str(10 * fig_scale),
+        font_size=str(font_size_factor * fig_scale),
         pos=positions
     )
+
+    if x_margin is not None:
+        fig.axes[0].set_xmargin(x_margin)
+    if y_margin is not None:
+        fig.axes[0].set_ymargin(y_margin)
