@@ -18,6 +18,8 @@ def draw_graph(
     color_map: Dict[int, str] = {},
     edge_color_map: Dict[Tuple[int, int], str] = {},
     edge_width_map: Dict[Tuple[int, int], float] = {},
+    marked_color_map: Dict[Tuple[int, int], str] = {},
+    layout_root: Optional[int] = None,
 ) -> plt.Figure:
 
     active_figure = figure
@@ -38,7 +40,10 @@ def draw_graph(
             node_colors.append(color_map[n])
         else:
             if n in marked_nodes:
-                node_colors.append("#f00")
+                if n in marked_color_map:
+                    node_colors.append(marked_color_map[n])
+                else:
+                    node_colors.append("#f00")
             else:
                 node_colors.append("#0f0")
 
@@ -68,7 +73,7 @@ def draw_graph(
     if get_layout is None:
         pos = None
     else:
-        pos = get_layout(g)
+        pos = get_layout(g, root=layout_root)
 
     axes: Optional[plt.Axes] = None
     if subplot is not None:
