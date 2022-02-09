@@ -20,6 +20,10 @@ def draw_graph(
     edge_width_map: Dict[Tuple[int, int], float] = {},
     marked_color_map: Dict[Tuple[int, int], str] = {},
     layout_root: Optional[int] = None,
+    node_size: int = 600,
+    font_size=10,
+    xmargin: float = 0.2,
+    ymargin: float = 0.2,
 ) -> plt.Figure:
 
     active_figure = figure
@@ -84,7 +88,7 @@ def draw_graph(
         g,
         pos=pos,
         node_color=node_colors,
-        node_size=800,
+        node_size=node_size,
     )
 
     # draw edges
@@ -100,13 +104,14 @@ def draw_graph(
         g,
         pos=pos,
         font_weight="bold",
+        font_size=font_size
     )
 
     if axes is None:
         axes = active_figure.axes[0]
 
-    axes.set_xmargin(0.2)
-    axes.set_ymargin(0.2)
+    axes.set_xmargin(xmargin)
+    axes.set_ymargin(ymargin)
 
     if title is not None:
         axes.set_title(title)

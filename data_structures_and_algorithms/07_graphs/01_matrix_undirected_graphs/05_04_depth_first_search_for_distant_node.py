@@ -17,7 +17,7 @@ def get_layout(g: Any, root: Optional[int] = None) -> Optional[Any]:
     nx.drawing.nx_pydot.pydot_layout(g, prog="dot")
     nx.drawing.layout.planar_layout(g)
     """
-    return nx.drawing.nx_pydot.pydot_layout(g)
+    return nx.drawing.nx_pydot.pydot_layout(g, prog="circo", root=root)
 
 
 def build_graph() -> Tuple[Set[int], Set[Tuple[int, int]]]:
@@ -64,6 +64,7 @@ def build_graph() -> Tuple[Set[int], Set[Tuple[int, int]]]:
 draw_graph = functools.partial(draw_graph, get_layout=get_layout)
 
 FIG_SCALE = 1.2
+LAYOUT_ROOT = 50
 
 
 def main() -> None:
@@ -77,13 +78,13 @@ def main() -> None:
 
     fig: plt.Figure = draw_graph(
         V, E, M,
-        subplot=121,
+        subplot=211,
         title="Start and target",
         marked_color_map=M_COLOR_MAP,
-        layout_root=START,
+        layout_root=LAYOUT_ROOT,
     )
 
-    fig.set_size_inches(8 * FIG_SCALE, 6 * FIG_SCALE)
+    fig.set_size_inches(10 * FIG_SCALE, 6 * FIG_SCALE)
 
     print(f"Perform depth first search for {START} from {TARGET}")
     target_found, result_edges = depth_first_search(V, E, START, TARGET)
@@ -98,10 +99,11 @@ def main() -> None:
     }
     draw_graph(
         V, E, M, figure=fig,
-        subplot=122, title="Discovered target",
+        subplot=212, title="Discovered target",
         edge_color_map=edge_color_map,
         edge_width_map=edge_width_map,
         marked_color_map=M_COLOR_MAP,
+        layout_root=LAYOUT_ROOT,
     )
 
 

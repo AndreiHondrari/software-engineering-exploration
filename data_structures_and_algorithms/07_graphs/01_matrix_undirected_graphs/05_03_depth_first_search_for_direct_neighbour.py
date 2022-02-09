@@ -11,7 +11,7 @@ from graph_utils import draw_graph
 hprint = functools.partial(print, "\n#")
 
 
-def get_layout(g: Any) -> Optional[Any]:
+def get_layout(g: Any, root: Optional[int] = None) -> Optional[Any]:
     """
     Examples:
     nx.drawing.nx_pydot.pydot_layout(g, prog="dot")

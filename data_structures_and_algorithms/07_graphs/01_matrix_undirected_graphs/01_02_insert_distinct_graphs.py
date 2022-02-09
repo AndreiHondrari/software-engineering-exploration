@@ -11,13 +11,13 @@ from graph_utils import draw_graph
 hprint = functools.partial(print, "\n#")
 
 
-def get_layout(g: Any) -> Optional[Any]:
+def get_layout(g: Any, root: Optional[int] = None) -> Optional[Any]:
     """
     Examples:
     nx.drawing.nx_pydot.pydot_layout(g, prog="dot")
     nx.drawing.layout.planar_layout(g)
     """
-    return nx.drawing.nx_pydot.pydot_layout(g)
+    return nx.drawing.nx_pydot.pydot_layout(g, prog="twopi", root=root)
 
 
 def main() -> None:
@@ -49,7 +49,7 @@ def main() -> None:
     # mark some
     marked_nodes = set([100, 30])
 
-    draw_graph(vertices, edges, marked_nodes, get_layout)
+    draw_graph(vertices, edges, marked_nodes, get_layout, layout_root=100)
 
 
 if __name__ == "__main__":
