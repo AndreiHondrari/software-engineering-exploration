@@ -95,7 +95,7 @@ def main() -> None:
 
     fig.set_size_inches(10 * FIG_SCALE, 6 * FIG_SCALE)
 
-    print(f"Perform depth first search for {TARGET} from {START}")
+    print(f"Perform breadth first search for {TARGET} from {START}")
     target_found, result_edges = breadth_first_search(V, E, START, TARGET)
     print("target found?:", target_found)
     print("path to target:", result_edges)
