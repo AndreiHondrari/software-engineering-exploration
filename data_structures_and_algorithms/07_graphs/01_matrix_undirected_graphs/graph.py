@@ -1,7 +1,7 @@
 
 import copy
 from collections import deque
-from typing import Set, Tuple, Deque
+from typing import Set, Tuple, Deque, Dict
 
 
 def determine_edge(node_a: int, node_b: int) -> Tuple[int, int]:
@@ -19,6 +19,18 @@ def add_edge(
     new_edge = determine_edge(node_a, node_b)
     new_edges.add(new_edge)
     return new_edges
+
+
+def add_weight(
+    weights: Dict[Tuple[int, int], int],
+    node_a: int,
+    node_b: int,
+    weight: int,
+) -> Dict[Tuple[int, int], int]:
+    new_weights = copy.copy(weights)
+    edge = determine_edge(node_a, node_b)
+    new_weights[edge] = weight
+    return new_weights
 
 
 def delete(
@@ -141,3 +153,48 @@ def breadth_first_search(
         candidates.extend(unqueued_neighbours)
 
     return False, search_edges
+
+
+def dijkstra_shortest_path(
+    vertices: Set[int],
+    edges: Set[Tuple[int, int]],
+    weights: Dict[Tuple[int, int], int],
+    current: int,
+    target: int,
+    visited: Set[int] = set(),
+    path: Set[Tuple[int, int]] = set()
+) -> Tuple[bool, Set[Tuple[int, int]]]:
+    if current not in vertices or target not in vertices:
+        return False, set()
+
+    # if we reached it then
+    if current == target:
+        return True, path
+
+    # look through the nearest neighbour for the target
+    neighbours = get_neighbours(edges, current)
+    unvisited_neighbours = neighbours.difference(visited)
+
+    if len(unvisited_neighbours) > 0:
+        closest_neighbour = list(
+            sorted(
+                unvisited_neighbours,
+                key=lambda x: weights[determine_edge(current, x)]
+            )
+        )[0]
+
+        neighbour_edge = determine_edge(current, closest_neighbour)
+        path_to_neighbour = copy.copy(path)
+        path_to_neighbour.add(neighbour_edge)
+
+        updated_visited = copy.copy(visited)
+        updated_visited.add(current)
+
+        return dijkstra_shortest_path(
+            vertices, edges, weights,
+            closest_neighbour, target,
+            updated_visited,
+            path_to_neighbour,
+        )
+
+    return False, set()

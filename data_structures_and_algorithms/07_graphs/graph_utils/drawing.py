@@ -11,6 +11,7 @@ def draw_graph(
     vertices: Set[int],
     edges: Set[Tuple[int, int]],
     marked_nodes: Set[int] = set(),
+    weights: Optional[Dict[Tuple[int, int], int]] = None,
     get_layout: Optional[Callable[[Any], Any]] = None,
     figure: Optional[plt.Figure] = None,
     subplot: Optional[int] = None,
@@ -21,7 +22,7 @@ def draw_graph(
     marked_color_map: Dict[Tuple[int, int], str] = {},
     layout_root: Optional[int] = None,
     node_size: int = 600,
-    font_size=10,
+    font_size: int = 10,
     xmargin: float = 0.2,
     ymargin: float = 0.2,
 ) -> plt.Figure:
@@ -35,7 +36,10 @@ def draw_graph(
         g.add_node(vertex)
 
     for edge in edges:
-        g.add_edge(edge[0], edge[1])
+        if weights is None:
+            g.add_edge(edge[0], edge[1])
+        else:
+            g.add_edge(edge[0], edge[1], weight=weights[edge])
 
     # compute values for nodes and edges
     node_colors = []
@@ -106,6 +110,13 @@ def draw_graph(
         font_weight="bold",
         font_size=font_size
     )
+
+    if weights is not None:
+        nx.draw_networkx_edge_labels(
+            g,
+            pos=pos,
+            edge_labels=weights,
+        )
 
     if axes is None:
         axes = active_figure.axes[0]
