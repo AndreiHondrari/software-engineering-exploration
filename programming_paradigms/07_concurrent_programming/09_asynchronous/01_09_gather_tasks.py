@@ -42,7 +42,7 @@ async def asynchronous_main() -> None:
     task1 = asyncio.create_task(do_something("jimmy", 1))
 
     tprint("Create task 2")
-    task2 = asyncio.create_task(do_something("maximus", 1))
+    task2 = asyncio.create_task(do_something("maximus", 2))
 
     results: Tuple[int, ...] = await asyncio.gather(task1, task2)
     tprint("RESULTS:", results)
