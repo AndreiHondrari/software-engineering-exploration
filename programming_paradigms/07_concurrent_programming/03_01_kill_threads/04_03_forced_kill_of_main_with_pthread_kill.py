@@ -16,7 +16,7 @@ def do_something() -> None:
             print(f"[{this_thread.name}] {random.randint(1, 100)}", flush=True)
             time.sleep(random.random())
     except KeyboardInterrupt:
-        print(f"[{this_thread.name}] INTERUPT DETECTED")
+        print(f"[{this_thread.name}] INTERUPT DETECTED", flush=True)
 
     print(f"[{this_thread.name}] STOP", flush=True)
 
@@ -40,9 +40,12 @@ def main() -> None:
     if main_thread.ident is not None:
         signal.pthread_kill(main_thread.ident, signal.SIGKILL)
     else:
-        print("[MAIN] Abnormal inexistence of ident value for main thread")
+        print(
+            "[MAIN] Abnormal inexistence of ident value for main thread",
+            flush=True
+        )
 
-    print("[MAIN] wait for child thread to DIE")
+    print("[MAIN] wait for child thread to DIE", flush=True)
     some_thread.join()
 
     print("[MAIN] DONE", flush=True)

@@ -16,7 +16,7 @@ def do_something() -> None:
             print(f"[{this_thread.name}] {random.randint(1, 100)}", flush=True)
             time.sleep(random.random())
     except KeyboardInterrupt:
-        print(f"[{this_thread.name}] INTERUPT DETECTED")
+        print(f"[{this_thread.name}] INTERUPT DETECTED", flush=True)
 
     print(f"[{this_thread.name}] STOP", flush=True)
 
@@ -41,7 +41,7 @@ def main() -> None:
     else:
         print("[MAIN] NO IDENT FOR THREAD", flush=True)
 
-    print("[MAIN] wait for child thread to DIE")
+    print("[MAIN] wait for child thread to DIE", flush=True)
     some_thread.join()
 
     print("[MAIN] DONE", flush=True)
