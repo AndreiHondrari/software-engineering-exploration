@@ -36,6 +36,9 @@ def do_some(kill: th.Event) -> None:
 
         tprint("[SLAVE] I'M DONE ! :'( ", flush=True)
 
+    except KeyboardInterrupt:
+        tprint("[SLAVE] SIGINT detected", flush=True)
+
     except Exception as err:
         tprint("[SLAVE] ERR:", repr(err), flush=True)
 
