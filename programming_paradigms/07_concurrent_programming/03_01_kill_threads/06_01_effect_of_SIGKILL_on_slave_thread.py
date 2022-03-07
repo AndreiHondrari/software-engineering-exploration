@@ -1,3 +1,7 @@
+"""
+Signalling SIGKILL on a thread will be passed to the root of the process group,
+which forces the entire program to shutdown immediately.
+"""
 import os
 import time
 import random
@@ -36,14 +40,10 @@ def main() -> None:
     time.sleep(2)
 
     print("[MAIN] initiate stop ...", flush=True)
-    main_thread = threading.main_thread()
-    if main_thread.ident is not None:
-        signal.pthread_kill(main_thread.ident, signal.SIGKILL)
+    if some_thread.ident is not None:
+        signal.pthread_kill(some_thread.ident, signal.SIGKILL)
     else:
-        print(
-            "[MAIN] Abnormal inexistence of ident value for main thread",
-            flush=True
-        )
+        print("[MAIN] NO IDENT FOR THREAD", flush=True)
 
     print("[MAIN] wait for child thread to DIE", flush=True)
     some_thread.join()
