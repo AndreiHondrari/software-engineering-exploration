@@ -14,8 +14,8 @@ def duplicate(x: int) -> int:
 
 
 def calculate_composed(
-    first_function: Callable,
-    second_function: Callable,
+    first_function: Callable[[int, int], int],
+    second_function: Callable[[int], int],
     a: int,
     b: int
 ) -> int:

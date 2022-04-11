@@ -14,15 +14,15 @@ def duplicate(x: int) -> int:
 
 
 def create_two_inputs_to_one_output_function(
-    first_function: Callable,
-    second_function: Callable,
-) -> int:
+    first_function: Callable[[int, int], int],
+    second_function: Callable[[int], int],
+) -> Callable[[int, int], int]:
     """
     Notice that the set of inputs matches
     the set of inputs of the first function.
     """
 
-    def composed_function(a: int, b: int):
+    def composed_function(a: int, b: int) -> int:
         return second_function(first_function(a, b))
 
     return composed_function
