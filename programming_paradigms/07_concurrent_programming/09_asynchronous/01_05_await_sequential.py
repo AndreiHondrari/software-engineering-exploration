@@ -26,10 +26,10 @@ def mark_thread_ends(
     return _inner
 
 
-async def do_something() -> int:
-    tprint("START DO SOMETHING")
-    await asyncio.sleep(1)
-    tprint("DONE WAITING")
+async def do_something(wait_amount: float, name: str) -> int:
+    tprint(f"[{name}] START DO SOMETHING")
+    await asyncio.sleep(wait_amount)
+    tprint(f"[{name}] DONE WAITING")
 
     return random.randint(1000, 10_000)
 
@@ -37,12 +37,17 @@ async def do_something() -> int:
 async def asynchronous_main() -> None:
     tprint("ASYNC MAIN STARTED")
 
+    print()
     tprint("first await")
-    await do_something()
+    x = await do_something(1, "JIMMY")
+    tprint(str(x))
 
+    print()
     tprint("second await")
-    await do_something()
+    y = await do_something(0.5, "LEONARDO")
+    tprint(str(y))
 
+    print()
     tprint("ASYNC MAIN FINISHED")
 
 
