@@ -19,6 +19,6 @@ if __name__ == '__main__':
     numerator_log = math.log(number)
     denominator_log = math.log(base)
 
-    exponent = int(numerator_log / denominator_log)
+    exponent = numerator_log / denominator_log
 
     print(f"{base} ** {exponent} = {number}")
