@@ -1,6 +1,12 @@
 
 
 def fib(n: int) -> int:
+    """
+    Exponential time complexity
+    due to extra call for each value
+
+    O(2^n)
+    """
     assert n > 0
 
     if n == 1 or n == 2:
