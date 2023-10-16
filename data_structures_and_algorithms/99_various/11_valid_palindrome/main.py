@@ -19,10 +19,14 @@ def valid_palindrome(s: str) -> bool:
 
 def main() -> None:
     s1 = "A man, a plan, a canal: Panama"
+    s2 = "abcde"
 
-    res = valid_palindrome("0P")
-    print("RES", res)
+    res = valid_palindrome(s1)
+    print(f"{res}\t | {s1}")
 
+    res = valid_palindrome(s2)
+    print(f"{res}\t | {s2}")
+    
 
 if __name__ == "__main__":
     main()
