@@ -5,6 +5,8 @@ A generator that yields in a unlimited loop can
 repeat a series of PRE/MID/POST operations until the caller
 no longer needs new operations to be executed.
 
+MID = POST + PRE
+
 Useful for:
 - continuous repetition of code segments
 """

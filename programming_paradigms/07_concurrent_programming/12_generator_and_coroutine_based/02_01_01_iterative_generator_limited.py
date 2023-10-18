@@ -4,6 +4,8 @@ Generator containing limited loop
 A generator that yields in a limited loop can
 repeat a series of PRE/MID/POST operations a specific number of times.
 
+MID = POST + PRE
+
 It makes sense to use this for cases where:
 - you want to start with pre stage
 - end with post stage

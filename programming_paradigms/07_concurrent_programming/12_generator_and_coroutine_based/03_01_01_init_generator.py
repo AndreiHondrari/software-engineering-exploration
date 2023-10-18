@@ -1,11 +1,8 @@
 """
 Generator initialization
 
-Use values passed to generator.
-Multiple values can be used distinctevily
-in separate sections.
+Values can be passed that can be used by the generator.
 """
-
 import functools
 from typing import Generator
 
