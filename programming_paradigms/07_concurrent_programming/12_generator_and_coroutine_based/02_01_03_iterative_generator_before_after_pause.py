@@ -4,8 +4,8 @@ Generator with inner loop.
 Placing an operation before or after the yield (pause)
 has some implications.
 
-Placing it after the yield requires starting the generator before using it.
 Placing it before the yield does not require any pre-start.
+Placing it after the yield requires starting the generator before using it.
 """
 import functools
 from typing import Generator
